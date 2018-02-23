@@ -8,12 +8,19 @@ Plug 'vim-syntastic/syntastic'
 Plug 'airblade/vim-gitgutter'
 Plug 'xolox/vim-misc'
 Plug 'altercation/vim-colors-solarized'
+Plug 'racer-rust/vim-racer'
+Plug 'rust-lang/rust.vim'
+Plug 'Shougo/deoplete.nvim'
+Plug 'roxma/nvim-yarp'
+Plug 'roxma/vim-hug-neovim-rpc'
 call plug#end()
 
 syntax enable
 filetype plugin indent on
 syntax on
+
 let g:python_recommended_style = 0
+let g:deoplete#enable_at_startup = 1
 
 set tabstop=4
 set shiftwidth=4
@@ -33,6 +40,14 @@ let g:netrw_list_hide='.*\.pyc$'
 
 let g:jedi#use_tabs_not_buffers = 1
 let g:jedi#goto_definitions_command = "<F1>"
+let g:jedi#completions_enabled = 0
+
+let g:racer_cmd = "/Users/kevinsimons/.cargo/bin/racer"
+let g:racer_experimental_completer = 1
+au FileType rust nmap gd <Plug>(rust-def)
+au FileType rust nmap gs <Plug>(rust-def-split)
+au FileType rust nmap gx <Plug>(rust-def-vertical)
+au FileType rust nmap <leader>gd <Plug>(rust-doc)
 
 let g:fzf_layout = { 'left': '~20%', 'window': '40vsplit enew' }
 let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'

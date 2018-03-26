@@ -15,11 +15,18 @@ RESET="\e[0m"
 #-----------------------------------------------------------------------------
 # Terminal and ENV settings
 #-----------------------------------------------------------------------------
+if [[ -e $HOME/config/shell ]]; then
+  BASE16_SHELL=$HOME/config/shell/base16-shell/
+  [ -n "$PS1" ] && [ -s $BASE16_SHELL/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+else
+  echo "No shell configs";
+fi
+
 export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-export PYENV_ROOT="/Users/kevinsimons/.pyenv"
+export PYENV_ROOT="$HOME/.pyenv"
 
 # Terminal Prompt
 parse_git_branch() {
@@ -43,10 +50,18 @@ print_code() {
 alias ll="ls -al"
 alias 🔥="echo 'RUN FIRE'"
 
+# Git aliases
+alias b="git branch"
+alias cb="git checkout -b"
+alias gs="git status"
+alias gupdate="git fetch --all --prune"
+alias gamend="git add -A && git commit --amend"
+
+
 
 # Virtualenv Wrapper Aliases
 function lsvirtualenv() {
-    ll ~/envs | awk '{print $9}' | grep '^[^\.]' | grep -Ev 'bin|lib|include'
+    ll -H ~/envs | awk '{print $9}' | grep '^[^\.]' | grep -Ev 'bin|lib|include'
 }
 
 function mkvirtualenv() {
@@ -62,14 +77,6 @@ function workon() {
     source ~/envs/$1/bin/activate
 }
 
-
-# Git aliases
-alias b="git branch"
-alias cb="git checkout -b"
-alias gs="git status"
-alias gupdate="git fetch --all --prune"
-alias gamend="git add -A && git commit --amend"
-
 function blame() {
   print_code "git-guilt HEAD~$1"
   git-guilt HEAD~"$1";
@@ -80,8 +87,8 @@ alias blame="blame"
 #-----------------------------------------------------------------------------
 # Setup Environment
 #-----------------------------------------------------------------------------
-source "$HOME/tools/config/bash_profiles/work.profile"
-# source "$HOME/tools/config/bash_profiles/personal.profile"
+# source "$HOME/tools/config/bash_profiles/work.profile"
+source "$HOME/config/bash_profiles/personal.profile"
 
 [ -f ~/git-completion.bash ] && source ~/git-completion.bash
 
@@ -89,3 +96,5 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+export PATH="$HOME/.cargo/bin:$PATH"

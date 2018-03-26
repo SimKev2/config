@@ -1,5 +1,5 @@
-let g:python_host_prog = '/mnt/.envs/py2neovim/bin/python'
-let g:python3_host_prog = '/mnt/.envs/py3neovim/bin/python'
+let g:python_host_prog = expand('~/envs/py2neovim/bin/python')
+let g:python3_host_prog = expand('~/envs/py3neovim/bin/python')
 
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -91,7 +91,7 @@ inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " FZF
-let g:fzf_layout = { 'left': '~20%', 'window': '40vsplit enew' }
+let g:fzf_layout = { 'left': '~20%' }
 let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'
 
 
@@ -144,13 +144,17 @@ nnoremap td  :tabclose<CR>
 " =============================================================================
 " # Autocommands
 " =============================================================================
-" autocmd FileType rust nmap gd <Plug>(rust-def)
+autocmd Filetype html,xml,xsl,php source ~/.vim/scripts/closetag.vim
+
+autocmd Filetype python set colorcolumn=80
+
 autocmd FileType rust nmap gs <Plug>(rust-def-split)
 autocmd FileType rust nmap gx <Plug>(rust-def-vertical)
 autocmd FileType rust nmap <leader>gd <Plug>(rust-doc)
-autocmd Filetype html,xml,xsl,php source ~/.vim/scripts/closetag.vim
+autocmd Filetype rust set colorcolumn=100
 
 autocmd BufRead *.md set filetype=markdown
+autocmd BufRead *.profile set filetype=sh
 
 autocmd BufWritePre *.py :%s/\s\+$//e
 

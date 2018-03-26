@@ -52,7 +52,6 @@ alias 🔥="echo 'RUN FIRE'"
 
 # Git aliases
 alias b="git branch"
-alias cb="git checkout -b"
 alias gs="git status"
 alias gupdate="git fetch --all --prune"
 alias gamend="git add -A && git commit --amend"
@@ -87,8 +86,8 @@ alias blame="blame"
 #-----------------------------------------------------------------------------
 # Setup Environment
 #-----------------------------------------------------------------------------
-# source "$HOME/tools/config/bash_profiles/work.profile"
-source "$HOME/config/bash_profiles/personal.profile"
+source "$HOME/config/bash_profiles/work.profile"
+# source "$HOME/config/bash_profiles/personal.profile"
 
 [ -f ~/git-completion.bash ] && source ~/git-completion.bash
 

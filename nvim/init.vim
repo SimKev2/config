@@ -13,27 +13,31 @@ Plug 'itchyny/lightline.vim'
 Plug 'w0rp/ale'
 Plug 'machakann/vim-highlightedyank'
 Plug 'chriskempson/base16-vim'
+Plug 'scrooloose/nerdtree'
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'airblade/vim-gitgutter'
+Plug 'mileszs/ack.vim'
 
 " Language Specific Support
 Plug 'racer-rust/vim-racer'
 Plug 'rust-lang/rust.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
-Plug 'roxma/nvim-completion-manager'
-Plug 'roxma/nvim-cm-racer'
 
 " Completion manager plugins
 Plug 'Shougo/deoplete.nvim'
-Plug 'davidhalter/jedi-vim', {'for': 'python'}
 
 Plug 'Shougo/echodoc.vim'
+
+Plug 'jiangmiao/auto-pairs'
 call plug#end()
 
 " =============================================================================
 " # Plugin settings
 " =============================================================================
+
+syntax enable
+syntax on
 
 " Base16 
 set background=dark
@@ -49,19 +53,39 @@ if !has('gui_running')
   set t_Co=256
 endif
 
+" NerdTree
+map <C-n> :NERDTreeToggle<CR>
+let g:NERDTreeWinSize=50
+let g:NERDTreeIgnore = ['\.pyc$']
+let NERDTreeShowHidden=1
+
 " Linter
 let g:ale_sign_column_always = 1
 " only lint on save
 let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_save = 0
+let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
+let g:ale_fix_on_save = 1
+
+let g:ale_fixers = {
+\   'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf'],
+\   'markdown': ['remove_trailing_lines', 'trim_whitespace'],
+\}
+
 let g:ale_rust_cargo_use_check = 1
 let g:ale_rust_cargo_check_all_targets = 1
 
 " GitGutter
 let g:gitgutter_realtime = 1
 
+" Ack
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
+map <C-p> :LAck!<Space>
+
 " Python Completion
+let g:python_highlight_all = 1
 let g:python_recommended_style = 0
 let g:deoplete#enable_at_startup = 1
 let g:jedi#use_tabs_not_buffers = 1
@@ -76,15 +100,21 @@ let g:racer_experimental_completer = 1
 
 " LanguageClient
 let g:LanguageClient_serverCommands = {
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'sh': ['bash-language-server', 'start'],
+    \ 'dockerfile': ['docker-langserver', '--stdio'],
+    \ 'python': ['pyls'],
+    \ 'ruby': ['solargraph', 'stdio'],
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls']
     \ }
 let g:LanguageClient_autoStart = 1
+nnoremap <silent> gu :call LanguageClient_textDocument_references()<CR>
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
+
 " Completion
-" newline on enter
+" no newline on enter
 inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<C-n>\<C-y>":"\<C-y>"):"\<CR>")
 " tab to select
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -98,15 +128,22 @@ let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir a
 " =============================================================================
 " # Editor settings
 " =============================================================================
+set backspace=indent,eol,start
+
 let g:netrw_list_hide='.*\.pyc$'
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_altv = 1
+let g:netrw_browse_split = 4
+let g:netrw_winsize = 20
 
 filetype plugin indent on
-syntax enable
-syntax on
 set encoding=utf-8
 set nowrap
 set nojoinspaces
 set termguicolors
+highlight ColorColumn ctermbg=235 guibg=#2c2d27
+set signcolumn=yes
 
 set splitright
 set splitbelow
@@ -115,6 +152,9 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
+set scroll=20
+
+autocmd FileType ruby set shiftwidth=2
 
 " Proper search
 set incsearch
@@ -130,6 +170,8 @@ au FocusGained,BufEnter * :checktime
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*/node_modules/*
 
 :nmap <C-f> :FZF<CR>
+" Yank to the clipboard
+map <C-c> "*y
 
 nnoremap th  :tabfirst<CR>
 nnoremap tj  :tabnext<CR>
@@ -144,17 +186,17 @@ nnoremap td  :tabclose<CR>
 " =============================================================================
 " # Autocommands
 " =============================================================================
-autocmd Filetype html,xml,xsl,php source ~/.vim/scripts/closetag.vim
-
-autocmd Filetype python set colorcolumn=80
-
-autocmd FileType rust nmap gs <Plug>(rust-def-split)
-autocmd FileType rust nmap gx <Plug>(rust-def-vertical)
-autocmd FileType rust nmap <leader>gd <Plug>(rust-doc)
-autocmd Filetype rust set colorcolumn=100
-
 autocmd BufRead *.md set filetype=markdown
 autocmd BufRead *.profile set filetype=sh
 
-autocmd BufWritePre *.py :%s/\s\+$//e
+autocmd Filetype html,xml,xsl,php source ~/.vim/scripts/closetag.vim
+
+autocmd Filetype python set colorcolumn=80
+autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr><C-o>
+
+autocmd FileType rust nmap gs <Plug>(rust-def-split)
+autocmd FileType rust nmap gx <Plug>(rust-def-vertical)
+autocmd Filetype rust set colorcolumn=100
+
+autocmd Filetype markdown,yaml set colorcolumn=120
 

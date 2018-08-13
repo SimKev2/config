@@ -17,10 +17,6 @@ RESET='\[\033[00m\]'
 export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]: \[\033[01;34m\]\w\[\033[00m\]\[\033[01;32m\]$(parse_git_branch)\[\033[00m\] \n$ '
 export PS2='$ '
 
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
 bind 'set mark-symlinked-directories on'
 set mark-symlinked-directories on
 

@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# Gobal definitions
+# Global definitions
 #-----------------------------------------------------------------------------
 RED="\e[31m"
 GREEN="\e[32m"
@@ -30,6 +30,8 @@ export PYENV_ROOT="$HOME/.pyenv"
 
 export PATH="$HOME/.pyenv/bin:$PATH"
 eval "$(pyenv init -)"
+export GOPATH="$HOME/go"
+export PATH="$PATH:$GOPATH/bin:$HOME/.pub-cache/bin"
 
 # Terminal Prompt
 parse_git_branch() {

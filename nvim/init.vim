@@ -30,6 +30,7 @@ Plug 'Shougo/deoplete.nvim'
 Plug 'Shougo/echodoc.vim'
 
 Plug 'jiangmiao/auto-pairs'
+Plug 'SirVer/ultisnips'
 call plug#end()
 
 " =============================================================================
@@ -67,10 +68,16 @@ let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
 let g:ale_fix_on_save = 1
 
+let g:ale_linters = {
+    \ 'dart': ['dartanalyzer'],
+    \ }
+
 let g:ale_fixers = {
-\   'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf'],
-\   'markdown': ['remove_trailing_lines', 'trim_whitespace'],
-\}
+    \ 'dart': ['remove_trailing_lines', 'trim_whitespace', 'dartfmt'],
+    \ 'go': ['remove_trailing_lines', 'trim_whitespace', 'gofmt'],
+    \ 'markdown': ['remove_trailing_lines', 'trim_whitespace'],
+    \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf']
+    \ }
 
 let g:ale_rust_cargo_use_check = 1
 let g:ale_rust_cargo_check_all_targets = 1
@@ -99,12 +106,15 @@ let g:racer_cmd = expand("~/.cargo/bin/racer")
 let g:racer_experimental_completer = 1
 
 " LanguageClient
+set hidden
 let g:LanguageClient_serverCommands = {
-    \ 'sh': ['bash-language-server', 'start'],
+    \ 'dart': ['dart_language_server'],
     \ 'dockerfile': ['docker-langserver', '--stdio'],
+    \ 'go': ['go-langserver'],
     \ 'python': ['pyls'],
     \ 'ruby': ['solargraph', 'stdio'],
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls']
+    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'sh': ['bash-language-server', 'start']
     \ }
 let g:LanguageClient_autoStart = 1
 nnoremap <silent> gu :call LanguageClient_textDocument_references()<CR>
@@ -123,6 +133,19 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " FZF
 let g:fzf_layout = { 'left': '~20%' }
 let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'
+
+" UltiSnips
+let g:UltiSnipsSnippetsDir = $HOME."/.vim/.vimsnippets"
+let g:UltiSnipsEditSplit="vertical"
+let g:UltiSnipsExpandTrigger="<c-k>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+let g:UltiSnipsListSnippets="<leader>l"
+let g:UltiSnipsSnippetDirectories=[
+      \ "UltiSips",
+      \ $HOME."/.vim/.vimsnippets"
+\ ]
+"      \ $HOME . '/.vim/plugged/vim-snippets/snippets'
 
 
 " =============================================================================
@@ -189,6 +212,8 @@ nnoremap td  :tabclose<CR>
 autocmd BufRead *.md set filetype=markdown
 autocmd BufRead *.profile set filetype=sh
 
+autocmd Filetype go set colorcolumn=120
+
 autocmd Filetype html,xml,xsl,php source ~/.vim/scripts/closetag.vim
 
 autocmd Filetype python set colorcolumn=80
@@ -199,4 +224,17 @@ autocmd FileType rust nmap gx <Plug>(rust-def-vertical)
 autocmd Filetype rust set colorcolumn=100
 
 autocmd Filetype markdown,yaml set colorcolumn=120
+
+" Terminal Function
+function! NewTerm(height)
+    16split
+    terminal
+    setlocal nonumber
+    setlocal norelativenumber
+    setlocal signcolumn=no
+    setlocal colorcolumn=
+    startinsert!
+endfunction
+
+nnoremap <F9> :call NewTerm(16)<CR>
 

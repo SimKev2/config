@@ -1,5 +1,11 @@
 source /Users/kevinsimons/tools/alacritty/alacritty-completions.bash
 
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/kevinsimons/tools/google-cloud-sdk/path.bash.inc' ]; then source '/Users/kevinsimons/tools/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/kevinsimons/tools/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/kevinsimons/tools/google-cloud-sdk/completion.bash.inc'; fi
+
 #-----------------------------------------------------------------------------
 # Aliases
 #-----------------------------------------------------------------------------
@@ -17,7 +23,7 @@ function cb() {
 
 function localsky() {
   sky
-  cd skynet
+  cd ~/workspace/skynet/skynet || exit
   print_code "python /usr/local/google_appengine/dev_appserver.py --port 8083 --host localhost --datastore_path=/Users/kevinsimons/tools/skynet-datastore/datastore.db --admin_port=8082 ."
 
   python /usr/local/google_appengine/dev_appserver.py --port 8083 --host localhost --datastore_path=/Users/kevinsimons/tools/skynet-datastore/datastore.db --admin_port=8082 .
@@ -30,11 +36,11 @@ function new-day() {
     do
         if [[ -d "$HOME/workspace/$dir/.git" ]]; then
             print_code "gupdate $dir";
-            cd ~/workspace/$dir && git fetch --all --prune;
+            cd ~/workspace/"$dir" && git fetch --all --prune;
             echo;
         fi;
     done;
-    cd $orig_dir
+    cd "$orig_dir" || exit
 }
 
 function ssh-switch() {
@@ -61,7 +67,7 @@ function sync() {
 
 function rapi() {
     wa skynet;
-    cd skynet;
+    cd skynet || exit
     appspot=wf-skynet-staging;
     server=$appspot.appspot.com;
     if [ $# -gt 0 ]; then

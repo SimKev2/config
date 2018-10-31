@@ -223,7 +223,9 @@ autocmd FileType rust nmap gs <Plug>(rust-def-split)
 autocmd FileType rust nmap gx <Plug>(rust-def-vertical)
 autocmd Filetype rust set colorcolumn=100
 
-autocmd Filetype markdown,yaml set colorcolumn=120
+autocmd Filetype markdown set colorcolumn=100
+autocmd Filetype markdown set textwidth=99
+autocmd Filetype yaml set colorcolumn=120
 
 " Terminal Function
 function! NewTerm(height)

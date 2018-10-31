@@ -44,8 +44,8 @@ determine_minikube() {
       echo " ☸"
   fi
 }
-export PS1="${BOLD}\\u${RESET}@\\h:\$(determine_minikube) \\w${GREEN}\$(parse_git_branch)${RESET} \\n| => "
-export PS2="| => "
+export PS1="${BOLD}\\u${RESET}@\\h:\$(determine_minikube) \\w${GREEN}\$(parse_git_branch)${RESET} \\n$ "
+export PS2="$ "
 
 
 #-----------------------------------------------------------------------------

@@ -8,3 +8,6 @@ highlight link pythonDocArg Type
 
 syn region pythonDocString start=+[uU]\=\z('''\|"""\)+ end="\z1" keepend contains=pythonDocArg,pythonDocCode
 highlight link pythonDocString String 
+
+syn match pythonKwarg "\h\i*\ze==\@!"
+highlight link pythonKwarg Type

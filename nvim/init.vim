@@ -7,9 +7,21 @@ if empty(glob('~/.vim/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    if has('nvim')
+      !cargo build --release
+    else
+      !cargo build --release --no-default-features --features json-rpc
+    endif
+  endif
+endfunction
+
 call plug#begin('~/.vim/plugged')
 " GUI
-Plug 'itchyny/lightline.vim'
+" Plug 'itchyny/lightline.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 Plug 'w0rp/ale'
 Plug 'machakann/vim-highlightedyank'
 Plug 'chriskempson/base16-vim'
@@ -28,6 +40,7 @@ Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 Plug 'Shougo/deoplete.nvim'
 
 Plug 'Shougo/echodoc.vim'
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
 Plug 'jiangmiao/auto-pairs'
 Plug 'SirVer/ultisnips'
@@ -42,7 +55,7 @@ syntax on
 
 " Base16 
 set background=dark
-colorscheme base16-atelier-dune
+colorscheme base16-default-dark
 hi Normal ctermbg=NONE
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
@@ -56,9 +69,41 @@ endif
 
 " NerdTree
 map <C-n> :NERDTreeToggle<CR>
-let g:NERDTreeWinSize=50
+let g:NERDTreeWinSize = 50
 let g:NERDTreeIgnore = ['\.pyc$']
-let NERDTreeShowHidden=1
+let NERDTreeShowHidden = 1
+
+" NERDTrees File highlighting
+function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
+ exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
+ exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'\*\=$#'
+endfunction
+
+call NERDTreeHighlightFile('md', 'blue', 'none', '#8099B2', 'none')
+
+call NERDTreeHighlightFile('yml', 'yellow', 'none', '#DBD880', 'none')
+call NERDTreeHighlightFile('yaml', 'yellow', 'none', '#DBD880', 'none')
+call NERDTreeHighlightFile('json', 'yellow', 'none', '#DBD880', 'none')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', '#DBD880', 'none')
+call NERDTreeHighlightFile('config', 'yellow', 'none', '#DBD880', 'none')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', '#DBD880', 'none')
+call NERDTreeHighlightFile('cfg', 'yellow', 'none', '#DBD880', 'none')
+
+call NERDTreeHighlightFile('txt', 'gray', 'none', '#A0A0A0', 'none')
+
+call NERDTreeHighlightFile('sh', 'gray', 'none', '#BC9898', 'none')
+
+call NERDTreeHighlightFile('go', 'yellow', 'none', '#2ED2F2', 'none')
+call NERDTreeHighlightFile('py', 'blue', 'none', '#55A8ED', 'none')
+call NERDTreeHighlightFile('rs', 'red', 'none', '#A86A5E', 'none')
+
+" call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', 'none')
+" call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', 'none')
+" call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', 'none')
+" call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', 'none')
+" call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', 'none')
+" call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', 'none')
+
 
 " Linter
 let g:ale_sign_column_always = 1
@@ -70,6 +115,7 @@ let g:ale_fix_on_save = 1
 
 let g:ale_linters = {
     \ 'dart': ['dartanalyzer'],
+    \ 'yaml': ['yamllint'],
     \ }
 
 let g:ale_fixers = {
@@ -133,6 +179,9 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " FZF
 let g:fzf_layout = { 'left': '~20%' }
 let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'
+
+" Markdown Composer
+let g:markdown_composer_open_browser = 0
 
 " UltiSnips
 let g:UltiSnipsSnippetsDir = $HOME."/.vim/.vimsnippets"
@@ -226,6 +275,7 @@ autocmd Filetype rust set colorcolumn=100
 autocmd Filetype markdown set colorcolumn=100
 autocmd Filetype markdown set textwidth=99
 autocmd Filetype yaml set colorcolumn=120
+autocmd Filetype yaml setlocal tabstop=2 shiftwidth=2
 
 " Terminal Function
 function! NewTerm(height)

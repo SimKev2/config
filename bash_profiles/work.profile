@@ -6,6 +6,13 @@ if [ -f '/Users/kevinsimons/tools/google-cloud-sdk/path.bash.inc' ]; then source
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/kevinsimons/tools/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/kevinsimons/tools/google-cloud-sdk/completion.bash.inc'; fi
 
+if [ -f /usr/local/etc/bash_completion ]; then 
+    source /usr/local/etc/bash_completion
+    if [ -f '/Users/kevinsimons/.kube/completion.bash.inc' ]; then source '/Users/kevinsimons/.kube/completion.bash.inc'; fi
+fi
+
+export KUBECONFIG="/Users/kevinsimons/.kube/config:/Users/kevinsimons/workspace/EKS/kubeconfigs.yaml"
+
 #-----------------------------------------------------------------------------
 # Aliases
 #-----------------------------------------------------------------------------
@@ -91,11 +98,14 @@ function pr() {
 
 function gproj() {
     # Usage: gproj <repo name>
-    cd ~/workspace || exit;
+    cd ~/workspace;
     git clone git@github.com:Workiva/"$1".git;
-    cd "$1" || exit;
+    cd "$1";
     git remote rename origin upstream;
-    git remote add kevinsimons-wf git@github.com:kevinsimons-wf/"$1".git;
+    echo "Checking kevinsimons-wf remote"
+    if git ls-remote --heads git@github.com:kevinsimons-wf/"$1".git; then
+        git remote add kevinsimons-wf git@github.com:kevinsimons-wf/"$1".git;
+    fi
     gupdate;
 }
 

@@ -17,7 +17,7 @@ RESET="\e[0m"
 #-----------------------------------------------------------------------------
 if [[ -e $HOME/config/shell ]]; then
   BASE16_SHELL=$HOME/config/shell/base16-shell/
-  [ -n "$PS1" ] && [ -s "$BASE16_SHELL"/profile_helper.sh ] && eval "$($BASE16_SHELL/profile_helper.sh)"
+  [ -n "$PS1" ] && [ -s "$BASE16_SHELL"/profile_helper.sh ] && eval "$("$BASE16_SHELL"/profile_helper.sh)"
 else
   echo "No shell configs";
 fi
@@ -34,17 +34,23 @@ export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin:$HOME/.pub-cache/bin"
 
 # Terminal Prompt
+export SHOW_KUBE_CONTEXT=0
 parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 determine_minikube() {
   if [[ -z "${DOCKER_HOST}" ]]; then
-      echo ""
+    echo ""
   else
-      echo " ☸"
+    echo " ☸"
   fi
 }
-export PS1="${BOLD}\\u${RESET}@\\h:\$(determine_minikube) \\w${GREEN}\$(parse_git_branch)${RESET} \\n$ "
+kubectl_context() {
+  if [ "$SHOW_KUBE_CONTEXT" = "1" ]; then
+    grep current-context < ~/.kube/config | awk '{print $2}'
+  fi
+}
+export PS1="${BOLD}\\u${RESET}@\\h:\$(determine_minikube) \\w${GREEN}\$(parse_git_branch)${RESET} ${BLUE}\$(kubectl_context)${RESET}\\n$ "
 export PS2="$ "
 
 
@@ -52,7 +58,7 @@ export PS2="$ "
 # Helper Functions
 #-----------------------------------------------------------------------------
 print_code() {
-  printf "${CYAN}$1${RESET}\\n"
+  printf "${CYAN}%s${RESET}\\n" "$1"
 }
 
 
@@ -68,6 +74,8 @@ alias gs="git status"
 alias gupdate="git fetch --all --prune"
 alias gamend="git add -A && git commit --amend"
 
+alias k="kubectl"
+
 
 
 # Virtualenv Wrapper Aliases
@@ -77,12 +85,17 @@ _virtualEnvsComplete()
     COMPREPLY=( $(compgen -W "$(ls ~/envs)" -- $cur) )
 }
 
+function show_kube_context () {
+    export SHOW_KUBE_CONTEXT=1
+}
+
 function lsvirtualenv() {
     ll -H ~/envs | awk '{print $9}' | grep '^[^\.]' | grep -Ev 'bin|lib|include'
 }
 
 function mkvirtualenv() {
     virtualenv "${2:---python=python3}" ~/envs/"$1"
+    # shellcheck source=/dev/null
     source ~/envs/"$1"/bin/activate
 }
 
@@ -92,6 +105,7 @@ function rmvirtualenv() {
 complete -F _virtualEnvsComplete rmvirtualenv
 
 function workon() {
+    # shellcheck source=/dev/null
     source ~/envs/"$1"/bin/activate
 }
 complete -F _virtualEnvsComplete workon

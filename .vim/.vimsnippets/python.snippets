@@ -9,10 +9,11 @@ snippet ctest "A test class snippet"
 class $1TestCase(${2:unittest.TestCase}):
     def setUp(self):
 	    super($1TestCase, self).setUp()
+	    self.addCleanup(patch.stopall)
 endsnippet
 
 snippet patcho "A patch object snippet"
 self.mock_$1 = ${2:mock.}patch.object(
-    $3, '$1', ${5:autospec=True}
+    `!v substitute(Filename(), 'test_', '', 'g')`$3, '$1', ${5:autospec=True}
 ).start()
 endsnippet

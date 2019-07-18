@@ -35,6 +35,8 @@ Plug 'mileszs/ack.vim'
 Plug 'racer-rust/vim-racer'
 Plug 'rust-lang/rust.vim'
 Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
 
 " Completion manager plugins
 Plug 'Shougo/deoplete.nvim'
@@ -70,32 +72,66 @@ endif
 " NerdTree
 map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeWinSize = 50
-let g:NERDTreeIgnore = ['\.pyc$']
+let g:NERDTreeIgnore = ['\.pyc$', '__pycache__', '\.egg-info$']
 let NERDTreeShowHidden = 1
+
+let s:aqua =  '#3AFFDB'
+let s:beige = '#F5C06F'
+let s:blue = '#55A8ED'
+let s:blueDark = '#44788E'
+let s:blueLight = '#2ED2F2'
+let s:brown = '#905532'
+let s:gray = '#A0A0A0'
+let s:green = '#8FAA54'
+let s:greenLight = '#31B53E'
+let s:orange = '#D4843E'
+let s:orangeDark = '#F16529'
+let s:pink = '#CB6F6F'
+let s:purple = '#834F79'
+let s:purpleLight= '#834F79'
+let s:red = '#BC9898'
+let s:redDark = '#A86A5E'
+let s:salmon = '#EE6E73'
+let s:white = '#FFFFFF'
+let s:yellow = '#F09F17'
+let s:yellowLight = '#DBD880'
 
 " NERDTrees File highlighting
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
  exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
- exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'\*\=$#'
+ exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'*\*\=$#'
 endfunction
 
-call NERDTreeHighlightFile('md', 'blue', 'none', '#8099B2', 'none')
+function! Filename(...)
+  let template = get(a:000, 0, "$1")
+  let arg2 = get(a:000, 1, "")
 
-call NERDTreeHighlightFile('yml', 'yellow', 'none', '#DBD880', 'none')
-call NERDTreeHighlightFile('yaml', 'yellow', 'none', '#DBD880', 'none')
-call NERDTreeHighlightFile('json', 'yellow', 'none', '#DBD880', 'none')
-call NERDTreeHighlightFile('ini', 'yellow', 'none', '#DBD880', 'none')
-call NERDTreeHighlightFile('config', 'yellow', 'none', '#DBD880', 'none')
-call NERDTreeHighlightFile('conf', 'yellow', 'none', '#DBD880', 'none')
-call NERDTreeHighlightFile('cfg', 'yellow', 'none', '#DBD880', 'none')
+  let basename = expand('%:t:r')
 
-call NERDTreeHighlightFile('txt', 'gray', 'none', '#A0A0A0', 'none')
+  if basename == ''
+    return arg2
+  else
+    return substitute(template, '$1', basename, 'g')
+  endif
+endf
 
-call NERDTreeHighlightFile('sh', 'gray', 'none', '#BC9898', 'none')
+call NERDTreeHighlightFile('md', 'blue', 'none', s:purpleLight, 'none')
 
-call NERDTreeHighlightFile('go', 'yellow', 'none', '#2ED2F2', 'none')
-call NERDTreeHighlightFile('py', 'blue', 'none', '#55A8ED', 'none')
-call NERDTreeHighlightFile('rs', 'red', 'none', '#A86A5E', 'none')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('yaml', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('json', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('config', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('cfg', 'yellow', 'none', s:yellowLight, 'none')
+
+call NERDTreeHighlightFile('txt', 'gray', 'none', s:gray, 'none')
+
+call NERDTreeHighlightFile('sh', 'red', 'none', s:red, 'none')
+
+call NERDTreeHighlightFile('go', 'yellow', 'none', s:blueLight, 'none')
+call NERDTreeHighlightFile('py', 'blue', 'none', s:blue, 'none')
+call NERDTreeHighlightFile('rs', 'red', 'none', s:redDark, 'none')
 
 " call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', 'none')
 " call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', 'none')
@@ -132,8 +168,8 @@ let g:ale_rust_cargo_check_all_targets = 1
 let g:gitgutter_realtime = 1
 
 " Ack
-if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
+if executable('rg')
+  let g:ackprg = 'rg --vimgrep --no-heading'
 endif
 map <C-p> :LAck!<Space>
 
@@ -157,6 +193,8 @@ let g:LanguageClient_serverCommands = {
     \ 'dart': ['dart_language_server'],
     \ 'dockerfile': ['docker-langserver', '--stdio'],
     \ 'go': ['go-langserver'],
+    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+    \ 'javascript.jsx': ['/usr/local/bin/javascript-typescript-stdio'],
     \ 'python': ['pyls'],
     \ 'ruby': ['solargraph', 'stdio'],
     \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
@@ -168,6 +206,8 @@ nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
 nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 
+" JSX tag color fix
+hi link xmlEndTag xmlTag
 
 " Completion
 " no newline on enter
@@ -178,7 +218,8 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
 " FZF
 let g:fzf_layout = { 'left': '~20%' }
-let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'
+" let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'
+let $FZF_DEFAULT_COMMAND= 'rg --files --hidden --follow --glob "!{.git/*,node_modules/*,vendor/*,**/*.un~}" 2> /dev/null'
 
 " Markdown Composer
 let g:markdown_composer_open_browser = 0

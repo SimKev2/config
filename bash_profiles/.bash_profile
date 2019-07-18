@@ -26,18 +26,40 @@ export CLICOLOR=1
 export LSCOLORS=ExFxBxDxCxegedabagacad
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-export PYENV_ROOT="$HOME/.pyenv"
 
-export PATH="$HOME/.pyenv/bin:$PATH"
+# Set up pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+# Set up golang paths
 export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin:$HOME/.pub-cache/bin"
 
+# Set up rust source
+export PATH="$HOME/.cargo/bin:$PATH"
+export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+
+# GAE sdk setup
+export GAE_PREFIX=~/google-cloud-sdk/platform/google_appengine
+
+# NVM setup
+export NVM_DIR="$HOME/.nvm"
+
 # Terminal Prompt
-export SHOW_KUBE_CONTEXT=0
 parse_git_branch() {
   git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
+
+# Put kubectl context on PS1
+export SHOW_KUBE_CONTEXT=0
+kubectl_context() {
+  if [ "$SHOW_KUBE_CONTEXT" = "1" ]; then
+    grep current-context < ~/.kube/config | awk '{print $2}'
+  fi
+}
+
+# Helper to add icon on PS1 if in minikube docker daemon
 determine_minikube() {
   if [[ -z "${DOCKER_HOST}" ]]; then
     echo ""
@@ -45,11 +67,8 @@ determine_minikube() {
     echo " ☸"
   fi
 }
-kubectl_context() {
-  if [ "$SHOW_KUBE_CONTEXT" = "1" ]; then
-    grep current-context < ~/.kube/config | awk '{print $2}'
-  fi
-}
+
+# Terminal Prompt
 export PS1="${BOLD}\\u${RESET}@\\h:\$(determine_minikube) \\w${GREEN}\$(parse_git_branch)${RESET} ${BLUE}\$(kubectl_context)${RESET}\\n$ "
 export PS2="$ "
 
@@ -76,51 +95,40 @@ alias gamend="git add -A && git commit --amend"
 
 alias k="kubectl"
 
-
-
 # Virtualenv Wrapper Aliases
 _virtualEnvsComplete()
 {
     local cur=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=( $(compgen -W "$(ls ~/envs)" -- $cur) )
 }
-
-function show_kube_context () {
-    export SHOW_KUBE_CONTEXT=1
-}
-
 function lsvirtualenv() {
     ll -H ~/envs | awk '{print $9}' | grep '^[^\.]' | grep -Ev 'bin|lib|include'
 }
-
 function mkvirtualenv() {
     virtualenv "${2:---python=python3}" ~/envs/"$1"
     # shellcheck source=/dev/null
     source ~/envs/"$1"/bin/activate
 }
-
 function rmvirtualenv() {
     rm -rf ~/envs/"${1:-testenv}"
 }
-complete -F _virtualEnvsComplete rmvirtualenv
-
 function workon() {
     # shellcheck source=/dev/null
     source ~/envs/"$1"/bin/activate
 }
-complete -F _virtualEnvsComplete workon
-
 function wa() {
     cd ~/workspace/"$1" || exit 1
     workon "$1"
 }
+
+complete -F _virtualEnvsComplete rmvirtualenv
+complete -F _virtualEnvsComplete workon
 complete -F _virtualEnvsComplete wa
 
-function blame() {
-  print_code "git-guilt HEAD~$1"
-  git-guilt HEAD~"$1";
+# Add kube context to PS1
+function show_kube_context () {
+    export SHOW_KUBE_CONTEXT=1
 }
-alias blame="blame"
 
 
 #-----------------------------------------------------------------------------
@@ -132,12 +140,8 @@ case "$OSTYPE" in
   *) echo "Unknown os : $OSTYPE" ;;
 esac
 
+# Load setup scripts
 [ -f ~/git-completion.bash ] && source ~/git-completion.bash
-
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
-export PATH="$HOME/.cargo/bin:$PATH"
-export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+eval "$(nodenv init -)"

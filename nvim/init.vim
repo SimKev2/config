@@ -18,34 +18,58 @@ function! BuildComposer(info)
 endfunction
 
 call plug#begin('~/.vim/plugged')
-" GUI
-" Plug 'itchyny/lightline.vim'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'w0rp/ale'
-Plug 'machakann/vim-highlightedyank'
+" GUI colors
 Plug 'chriskempson/base16-vim'
+
+" File system explorer
 Plug 'scrooloose/nerdtree'
 
+" Bottom status bar
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" Linting engine
+Plug 'dense-analysis/ale'
+
+" Highlight yanks
+Plug 'machakann/vim-highlightedyank'
+
+" Fuzzy search
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+
+" Git diff signs in gutter
 Plug 'airblade/vim-gitgutter'
+
+" Change text file search 
 Plug 'mileszs/ack.vim'
+
+" Language server protocol support
+Plug 'autozimu/LanguageClient-neovim', {  'branch': 'next', 'do': 'bash install.sh' }
 
 " Language Specific Support
 Plug 'racer-rust/vim-racer'
 Plug 'rust-lang/rust.vim'
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
+Plug 'leafgarland/typescript-vim'
+Plug 'udalov/kotlin-vim'
 
 " Completion manager plugins
 Plug 'Shougo/deoplete.nvim'
 
+" Show function signatures in command line
 Plug 'Shougo/echodoc.vim'
+
+" Markdown renderer
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 
+" Auto pair brackets
 Plug 'jiangmiao/auto-pairs'
+
+" Snippet creation
 Plug 'SirVer/ultisnips'
+
+
 call plug#end()
 
 " =============================================================================
@@ -55,7 +79,9 @@ call plug#end()
 syntax enable
 syntax on
 
-" Base16 
+" ---------------------------------------------------------
+" # Base16 settings
+" ---------------------------------------------------------
 set background=dark
 colorscheme base16-default-dark
 hi Normal ctermbg=NONE
@@ -64,12 +90,27 @@ if filereadable(expand("~/.vimrc_background"))
   source ~/.vimrc_background
 endif
 
-" Lightline
+
+" ---------------------------------------------------------
+" # Airline settings
+" ---------------------------------------------------------
 if !has('gui_running')
   set t_Co=256
 endif
+" Remove the Insert/Normal mode since it is on airline
+set noshowmode 
+let g:airline_mode_map = {
+  \ 'ic'     : 'Insert',
+  \ 'ix'     : 'Insert',
+  \ }
+let g:airline#extensions#ale#enabled = 1
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
-" NerdTree
+" ---------------------------------------------------------
+" # NerdTree settings
+" ---------------------------------------------------------
 map <C-n> :NERDTreeToggle<CR>
 let g:NERDTreeWinSize = 50
 let g:NERDTreeIgnore = ['\.pyc$', '__pycache__', '\.egg-info$']
@@ -96,7 +137,6 @@ let s:white = '#FFFFFF'
 let s:yellow = '#F09F17'
 let s:yellowLight = '#DBD880'
 
-" NERDTrees File highlighting
 function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
  exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
  exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'*\*\=$#'
@@ -117,13 +157,14 @@ endf
 
 call NERDTreeHighlightFile('md', 'blue', 'none', s:purpleLight, 'none')
 
-call NERDTreeHighlightFile('yml', 'yellow', 'none', s:yellowLight, 'none')
-call NERDTreeHighlightFile('yaml', 'yellow', 'none', s:yellowLight, 'none')
-call NERDTreeHighlightFile('json', 'yellow', 'none', s:yellowLight, 'none')
-call NERDTreeHighlightFile('ini', 'yellow', 'none', s:yellowLight, 'none')
-call NERDTreeHighlightFile('config', 'yellow', 'none', s:yellowLight, 'none')
-call NERDTreeHighlightFile('conf', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('cfg', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('conf', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('config', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('ini', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('json', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('xml', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('yaml', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('yml', 'yellow', 'none', s:yellowLight, 'none')
 
 call NERDTreeHighlightFile('txt', 'gray', 'none', s:gray, 'none')
 
@@ -133,15 +174,10 @@ call NERDTreeHighlightFile('go', 'yellow', 'none', s:blueLight, 'none')
 call NERDTreeHighlightFile('py', 'blue', 'none', s:blue, 'none')
 call NERDTreeHighlightFile('rs', 'red', 'none', s:redDark, 'none')
 
-" call NERDTreeHighlightFile('html', 'yellow', 'none', 'yellow', 'none')
-" call NERDTreeHighlightFile('styl', 'cyan', 'none', 'cyan', 'none')
-" call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', 'none')
-" call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', 'none')
-" call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', 'none')
-" call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', 'none')
 
-
-" Linter
+" ---------------------------------------------------------
+" # ALE settings
+" ---------------------------------------------------------
 let g:ale_sign_column_always = 1
 " only lint on save
 let g:ale_lint_on_text_changed = 'never'
@@ -164,43 +200,50 @@ let g:ale_fixers = {
 let g:ale_rust_cargo_use_check = 1
 let g:ale_rust_cargo_check_all_targets = 1
 
-" GitGutter
+
+" ---------------------------------------------------------
+" # GitGutter settings
+" ---------------------------------------------------------
 let g:gitgutter_realtime = 1
 
-" Ack
+
+" ---------------------------------------------------------
+" # Ack settings
+" ---------------------------------------------------------
 if executable('rg')
   let g:ackprg = 'rg --vimgrep --no-heading'
 endif
 map <C-p> :LAck!<Space>
 
-" Python Completion
-let g:python_highlight_all = 1
-let g:python_recommended_style = 0
-let g:deoplete#enable_at_startup = 1
-let g:jedi#use_tabs_not_buffers = 1
-let g:jedi#goto_definitions_command = "<F1>"
-let g:jedi#completions_enabled = 0
 
-" Racer + rust
+" ---------------------------------------------------------
+" # Racer settings
+" ---------------------------------------------------------
 let g:rustfmt_autosave = 1
 let g:rustfmt_fail_silently = 1
 let g:racer_cmd = expand("~/.cargo/bin/racer")
 let g:racer_experimental_completer = 1
+let g:racer_insert_paren = 1
 
-" LanguageClient
+
+" ---------------------------------------------------------
+" # LanguageClient settings
+" ---------------------------------------------------------
 set hidden
 let g:LanguageClient_serverCommands = {
     \ 'dart': ['dart_language_server'],
-    \ 'dockerfile': ['docker-langserver', '--stdio'],
-    \ 'go': ['go-langserver'],
+    \ 'go': ['gopls'],
     \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
     \ 'javascript.jsx': ['/usr/local/bin/javascript-typescript-stdio'],
+    \ 'typescript': ['/usr/local/bin/javascript-typescript-stdio'],
     \ 'python': ['pyls'],
     \ 'ruby': ['solargraph', 'stdio'],
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'rust': ['rustup', 'run', 'stable', 'rls'],
     \ 'sh': ['bash-language-server', 'start']
     \ }
+" \ 'dockerfile': ['docker-langserver', '--stdio'],
 let g:LanguageClient_autoStart = 1
+let g:deoplete#enable_at_startup = 1
 nnoremap <silent> gu :call LanguageClient_textDocument_references()<CR>
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
@@ -209,22 +252,33 @@ nnoremap <silent> <F2> :call LanguageClient_textDocument_rename()<CR>
 " JSX tag color fix
 hi link xmlEndTag xmlTag
 
-" Completion
+
+" ---------------------------------------------------------
+" # Completion settings
+" ---------------------------------------------------------
 " no newline on enter
 inoremap <expr><CR> (pumvisible()?(empty(v:completed_item)?"\<C-n>\<C-y>":"\<C-y>"):"\<CR>")
 " tab to select
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 
-" FZF
+
+" ---------------------------------------------------------
+" # FZF settings
+" ---------------------------------------------------------
 let g:fzf_layout = { 'left': '~20%' }
-" let $FZF_DEFAULT_COMMAND= 'ag --vimgrep --ignore-dir node_modules --ignore-dir angular --ignore "*.pyc" -g ""'
 let $FZF_DEFAULT_COMMAND= 'rg --files --hidden --follow --glob "!{.git/*,node_modules/*,vendor/*,**/*.un~}" 2> /dev/null'
 
-" Markdown Composer
+
+" ---------------------------------------------------------
+" # Markdown Composer settings
+" ---------------------------------------------------------
 let g:markdown_composer_open_browser = 0
 
-" UltiSnips
+
+" ---------------------------------------------------------
+" # UltiSnips settings
+" ---------------------------------------------------------
 let g:UltiSnipsSnippetsDir = $HOME."/.vim/.vimsnippets"
 let g:UltiSnipsEditSplit="vertical"
 let g:UltiSnipsExpandTrigger="<c-k>"
@@ -235,13 +289,13 @@ let g:UltiSnipsSnippetDirectories=[
       \ "UltiSips",
       \ $HOME."/.vim/.vimsnippets"
 \ ]
-"      \ $HOME . '/.vim/plugged/vim-snippets/snippets'
 
 
 " =============================================================================
 " # Editor settings
 " =============================================================================
 set backspace=indent,eol,start
+set shortmess=filnxtToOFc
 
 let g:netrw_list_hide='.*\.pyc$'
 let g:netrw_banner = 0
@@ -306,12 +360,18 @@ autocmd Filetype go set colorcolumn=120
 
 autocmd Filetype html,xml,xsl,php source ~/.vim/scripts/closetag.vim
 
-autocmd Filetype python set colorcolumn=80
+autocmd Filetype python set colorcolumn=80,100
 autocmd FileType python nnoremap <leader>y :0,$!yapf<Cr><C-o>
 
 autocmd FileType rust nmap gs <Plug>(rust-def-split)
 autocmd FileType rust nmap gx <Plug>(rust-def-vertical)
+autocmd FileType rust nmap <leader>t :call TermSplitCmd("cargo test")<CR>
+autocmd FileType rust nmap <leader>r :call TermSplitCmd("RUST_BACKTRACE=1 cargo run")<CR>
+autocmd FileType rust nmap <leader>c :call TermSplitCmd("cargo build")<CR>
+autocmd FileType rust set makeprg=cargo\ build
 autocmd Filetype rust set colorcolumn=100
+
+autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2
 
 autocmd Filetype markdown set colorcolumn=100
 autocmd Filetype markdown set textwidth=99

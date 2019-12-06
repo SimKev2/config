@@ -30,7 +30,6 @@ export EDITOR="$VISUAL"
 # Set up pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
 
 # Set up golang paths
 export GOPATH="$HOME/go"
@@ -141,7 +140,8 @@ case "$OSTYPE" in
 esac
 
 # Load setup scripts
+eval "$(pyenv init -)"
 [ -f ~/git-completion.bash ] && source ~/git-completion.bash
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-eval "$(nodenv init -)"
+# eval "$(nodenv init -)"

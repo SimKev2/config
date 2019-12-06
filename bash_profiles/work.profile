@@ -12,6 +12,9 @@ if [ -f /usr/local/etc/bash_completion ]; then
 fi
 
 export KUBECONFIG="/Users/kevinsimons/.kube/config:/Users/kevinsimons/workspace/EKS/kubeconfigs.yaml"
+export GOPRIVATE="github.com/Workiva/*,github.com/kevinsimons-wf/*"
+
+source /Users/kevinsimons/.creds/bash_env.sh
 
 #-----------------------------------------------------------------------------
 # Aliases
@@ -24,8 +27,8 @@ alias assigned-prs='open https://github.com/pulls/mentioned'
 #-----------------------------------------------------------------------------
 
 function cb() {
-    print_code "git checkout -b $1 ${2:-kevinsimons-wf/master}";
-    git checkout -b "$1" "${2:-kevinsimons-wf/master}"
+    print_code "git checkout -b $1 ${2:-upstream/master}";
+    git checkout -b "$1" "${2:-upstream/master}"
 }
 
 function localsky() {
@@ -98,15 +101,33 @@ function pr() {
 
 function gproj() {
     # Usage: gproj <repo name>
-    cd ~/workspace;
+    cd ~/workspace || return;
     git clone git@github.com:Workiva/"$1".git;
-    cd "$1";
+    cd "$1" || return;
     git remote rename origin upstream;
     echo "Checking kevinsimons-wf remote"
     if git ls-remote --heads git@github.com:kevinsimons-wf/"$1".git; then
         git remote add kevinsimons-wf git@github.com:kevinsimons-wf/"$1".git;
     fi
     gupdate;
+}
+
+function goproj() {
+    # Usage: goproj <repo name>
+    cd ~/go/src/github.com/Workiva || return;
+    git clone git@github.com:Workiva/"$1".git;
+    cd "$1" || return;
+    git remote rename origin upstream;
+    echo "Checking kevinsimons-wf remote"
+    if git ls-remote --heads git@github.com:kevinsimons-wf/"$1".git; then
+        git remote add kevinsimons-wf git@github.com:kevinsimons-wf/"$1".git;
+    fi
+    gupdate;
+}
+
+function notification() {
+    # Usage: notification <message>
+    osascript -e 'display notification "'"$*"'"';
 }
 
 function gremote() {

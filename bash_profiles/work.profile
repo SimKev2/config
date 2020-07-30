@@ -1,12 +1,6 @@
 source /Users/kevinsimons/tools/alacritty/alacritty-completions.bash
 
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/kevinsimons/tools/google-cloud-sdk/path.bash.inc' ]; then source '/Users/kevinsimons/tools/google-cloud-sdk/path.bash.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/kevinsimons/tools/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/kevinsimons/tools/google-cloud-sdk/completion.bash.inc'; fi
-
-if [ -f /usr/local/etc/bash_completion ]; then 
+if [ -f /usr/local/etc/bash_completion ]; then
     source /usr/local/etc/bash_completion
     if [ -f '/Users/kevinsimons/.kube/completion.bash.inc' ]; then source '/Users/kevinsimons/.kube/completion.bash.inc'; fi
 fi
@@ -29,14 +23,6 @@ alias assigned-prs='open https://github.com/pulls/mentioned'
 function cb() {
     print_code "git checkout -b $1 ${2:-upstream/master}";
     git checkout -b "$1" "${2:-upstream/master}"
-}
-
-function localsky() {
-  sky
-  cd ~/workspace/skynet/skynet || exit
-  print_code "python /usr/local/google_appengine/dev_appserver.py --port 8083 --host localhost --datastore_path=/Users/kevinsimons/tools/skynet-datastore/datastore.db --admin_port=8082 ."
-
-  python /usr/local/google_appengine/dev_appserver.py --port 8083 --host localhost --datastore_path=/Users/kevinsimons/tools/skynet-datastore/datastore.db --admin_port=8082 .
 }
 
 function new-day() {
@@ -73,24 +59,6 @@ function sync() {
     git pull upstream "$1"
     print_code "git push kevinsimons-wf $1"
     git push kevinsimons-wf "$1"
-}
-
-function rapi() {
-    wa skynet;
-    cd skynet || exit
-    appspot=wf-skynet-staging;
-    server=$appspot.appspot.com;
-    if [ $# -gt 0 ]; then
-        appspot="$1";
-        server=$appspot.appspot.com;
-    fi;
-    if [ "$1" = 'localhost' ]; then
-        appspot='';
-        server='localhost:8083';
-    fi;
-    print_code "remote_api_shell.py -s $server";
-    remote_api_shell.py -s $server;
-    cd ..
 }
 
 function pr() {
@@ -153,5 +121,19 @@ function gremote() {
                 git remote "$@";
             fi;
         fi;
+    fi
+}
+
+function gifenc() {
+    if [ "$#" -ne 2 ]; then
+        print_code "Usage";
+        print_code "gifenc <input.file> <output.file>";
+    else
+        palette="/tmp/palette.png";
+        filters="fps=30,scale=1080:-1:flags=lanczos";
+        print_code "ffmpeg -v warning -i $1 -vf \"$filters,palettegen\" -y $palette";
+        ffmpeg -v warning -i "$1" -vf "$filters,palettegen" -y "$palette";
+        print_code "ffmpeg -v warning -i $1 -i $palette -lavfi \"$filters [x]; [x][1:v] paletteuse\" -y $2";
+        ffmpeg -v warning -i "$1" -i "$palette" -lavfi "$filters [x]; [x][1:v] paletteuse" -y "$2";
     fi
 }

@@ -39,8 +39,8 @@ export PATH="$PATH:$GOPATH/bin:$HOME/.pub-cache/bin"
 export PATH="$HOME/.cargo/bin:$PATH"
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 
-# GAE sdk setup
-export GAE_PREFIX=~/google-cloud-sdk/platform/google_appengine
+# Set up java env
+export JAVA_HOME="/Library/Java/JavaVirtualMachines/openjdk-13.jdk/Contents/Home/"
 
 # NVM setup
 export NVM_DIR="$HOME/.nvm"

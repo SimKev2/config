@@ -37,11 +37,11 @@ Plug 'machakann/vim-highlightedyank'
 " Fuzzy search
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
+" Change text file search
+Plug 'mileszs/ack.vim'
+
 " Git diff signs in gutter
 Plug 'airblade/vim-gitgutter'
-
-" Change text file search 
-Plug 'mileszs/ack.vim'
 
 " Language server protocol support
 Plug 'autozimu/LanguageClient-neovim', {  'branch': 'next', 'do': 'bash install.sh' }
@@ -53,6 +53,7 @@ Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'leafgarland/typescript-vim'
 Plug 'udalov/kotlin-vim'
+Plug 'tsandall/vim-rego'
 
 " Completion manager plugins
 Plug 'Shougo/deoplete.nvim'
@@ -66,10 +67,6 @@ Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 " Auto pair brackets
 Plug 'jiangmiao/auto-pairs'
 
-" Snippet creation
-Plug 'SirVer/ultisnips'
-
-
 call plug#end()
 
 " =============================================================================
@@ -82,13 +79,14 @@ syntax on
 " ---------------------------------------------------------
 " # Base16 settings
 " ---------------------------------------------------------
-set background=dark
-colorscheme base16-default-dark
 hi Normal ctermbg=NONE
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background
 endif
+set background=dark
+colorscheme base16-default-dark
+" colorscheme base16-brewer
 
 
 " ---------------------------------------------------------
@@ -98,7 +96,7 @@ if !has('gui_running')
   set t_Co=256
 endif
 " Remove the Insert/Normal mode since it is on airline
-set noshowmode 
+set noshowmode
 let g:airline_mode_map = {
   \ 'ic'     : 'Insert',
   \ 'ix'     : 'Insert',
@@ -190,12 +188,24 @@ let g:ale_linters = {
     \ 'yaml': ['yamllint'],
     \ }
 
+function! OpaFmt(buffer)
+    let winview = winsaveview()
+    silent !clear
+    silent execute "%!opa fmt"
+    call winrestview(winview)
+endfunction
+
 let g:ale_fixers = {
+    \ '*': ['remove_trailing_lines', 'trim_whitespace'],
     \ 'dart': ['remove_trailing_lines', 'trim_whitespace', 'dartfmt'],
     \ 'go': ['remove_trailing_lines', 'trim_whitespace', 'gofmt'],
+    \ 'javascript': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
+    \ 'javascript.jsx': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
+    \ 'typescript': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
     \ 'markdown': ['remove_trailing_lines', 'trim_whitespace'],
-    \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf']
+    \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf'],
     \ }
+    " \ 'rego': ['remove_trailing_lines', 'trim_whitespace', "OpaFmt"]
 
 let g:ale_rust_cargo_use_check = 1
 let g:ale_rust_cargo_check_all_targets = 1
@@ -233,6 +243,7 @@ set hidden
 let g:LanguageClient_serverCommands = {
     \ 'dart': ['dart_language_server'],
     \ 'go': ['gopls'],
+    \ 'java': ['/Users/kevinsimons/tools/java-language-server/dist/lang_server_mac.sh', '--quiet'],
     \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
     \ 'javascript.jsx': ['/usr/local/bin/javascript-typescript-stdio'],
     \ 'typescript': ['/usr/local/bin/javascript-typescript-stdio'],
@@ -371,7 +382,10 @@ autocmd FileType rust nmap <leader>c :call TermSplitCmd("cargo build")<CR>
 autocmd FileType rust set makeprg=cargo\ build
 autocmd Filetype rust set colorcolumn=100
 
-autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2
+autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 colorcolumn=100
+autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 colorcolumn=100
+
+autocmd Filetype rego setlocal autoindent noexpandtab tabstop=4 shiftwidth=4 colorcolumn=100
 
 autocmd Filetype markdown set colorcolumn=100
 autocmd Filetype markdown set textwidth=99
@@ -390,4 +404,3 @@ function! NewTerm(height)
 endfunction
 
 nnoremap <F9> :call NewTerm(16)<CR>
-

@@ -48,6 +48,7 @@ Plug 'autozimu/LanguageClient-neovim', {  'branch': 'next', 'do': 'bash install.
 
 " Language Specific Support
 Plug 'racer-rust/vim-racer'
+Plug 'cespare/vim-toml'
 Plug 'rust-lang/rust.vim'
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -203,6 +204,7 @@ let g:ale_fixers = {
     \ 'typescript': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
     \ 'markdown': ['remove_trailing_lines', 'trim_whitespace'],
     \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf'],
+    \ 'rust': ['remove_trailing_lines', 'trim_whitespace', 'rustfmt']
     \ }
     " \ 'rego': ['remove_trailing_lines', 'trim_whitespace', "OpaFmt"]
     " \ 'dart': ['remove_trailing_lines', 'trim_whitespace', 'dartfmt'],
@@ -231,15 +233,16 @@ map <C-p> :LAck!<Space>
 " ---------------------------------------------------------
 let g:rustfmt_autosave = 1
 let g:rustfmt_fail_silently = 1
+let $RUST_SRC_PATH = systemlist("rustc --print sysroot")[0] . "/lib/rustlib/src/rust/src"
 let g:racer_cmd = expand("~/.cargo/bin/racer")
 let g:racer_experimental_completer = 1
 let g:racer_insert_paren = 1
 
+set hidden
 
 " ---------------------------------------------------------
 " # LanguageClient settings
 " ---------------------------------------------------------
-set hidden
 let g:LanguageClient_serverCommands = {
     \ 'go': ['gopls'],
     \ 'python': ['pyls'],
@@ -380,7 +383,7 @@ autocmd Filetype rego setlocal autoindent noexpandtab tabstop=4 shiftwidth=4 col
 autocmd Filetype markdown set colorcolumn=100
 autocmd Filetype markdown set textwidth=99
 autocmd Filetype yaml set colorcolumn=120
-autocmd Filetype yaml setlocal tabstop=2 shiftwidth=2
+autocmd Filetype html,yaml setlocal tabstop=2 shiftwidth=2
 
 " Terminal Function
 function! NewTerm(height)

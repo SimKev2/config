@@ -1,14 +1,14 @@
-source /Users/kevinsimons/tools/alacritty/alacritty-completions.bash
-
 if [ -f /usr/local/etc/bash_completion ]; then
     source /usr/local/etc/bash_completion
     if [ -f '/Users/kevinsimons/.kube/completion.bash.inc' ]; then source '/Users/kevinsimons/.kube/completion.bash.inc'; fi
 fi
 
+export BASH_SILENCE_DEPRECATION_WARNING=1
+export GPG_TTY=$(tty)
 export KUBECONFIG="/Users/kevinsimons/.kube/config:/Users/kevinsimons/workspace/EKS/kubeconfigs.yaml"
 export GOPRIVATE="github.com/Workiva/*,github.com/kevinsimons-wf/*"
 
-source /Users/kevinsimons/.creds/bash_env.sh
+if [ -f '/Users/kevinsimons/.creds/bash_env.sh' ]; then source '/Users/kevinsimons/.creds/bash_env.sh'; fi
 
 #-----------------------------------------------------------------------------
 # Aliases

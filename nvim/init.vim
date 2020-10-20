@@ -197,7 +197,6 @@ endfunction
 
 let g:ale_fixers = {
     \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-    \ 'dart': ['remove_trailing_lines', 'trim_whitespace', 'dartfmt'],
     \ 'go': ['remove_trailing_lines', 'trim_whitespace', 'gofmt'],
     \ 'javascript': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
     \ 'javascript.jsx': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
@@ -206,6 +205,7 @@ let g:ale_fixers = {
     \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf'],
     \ }
     " \ 'rego': ['remove_trailing_lines', 'trim_whitespace', "OpaFmt"]
+    " \ 'dart': ['remove_trailing_lines', 'trim_whitespace', 'dartfmt'],
 
 let g:ale_rust_cargo_use_check = 1
 let g:ale_rust_cargo_check_all_targets = 1
@@ -241,18 +241,19 @@ let g:racer_insert_paren = 1
 " ---------------------------------------------------------
 set hidden
 let g:LanguageClient_serverCommands = {
-    \ 'dart': ['dart_language_server'],
     \ 'go': ['gopls'],
-    \ 'java': ['/Users/kevinsimons/tools/java-language-server/dist/lang_server_mac.sh', '--quiet'],
-    \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
-    \ 'javascript.jsx': ['/usr/local/bin/javascript-typescript-stdio'],
-    \ 'typescript': ['/usr/local/bin/javascript-typescript-stdio'],
     \ 'python': ['pyls'],
-    \ 'ruby': ['solargraph', 'stdio'],
     \ 'rust': ['rustup', 'run', 'stable', 'rls'],
-    \ 'sh': ['bash-language-server', 'start']
     \ }
+
+" \ 'dart': ['dart_language_server'],
 " \ 'dockerfile': ['docker-langserver', '--stdio'],
+" \ 'java': ['/Users/kevinsimons/tools/java-language-server/dist/lang_server_mac.sh', '--quiet'],
+" \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
+" \ 'javascript.jsx': ['/usr/local/bin/javascript-typescript-stdio'],
+" \ 'ruby': ['solargraph', 'stdio'],
+" \ 'sh': ['bash-language-server', 'start']
+" \ 'typescript': ['/usr/local/bin/javascript-typescript-stdio'],
 let g:LanguageClient_autoStart = 1
 let g:deoplete#enable_at_startup = 1
 nnoremap <silent> gu :call LanguageClient_textDocument_references()<CR>
@@ -285,21 +286,6 @@ let $FZF_DEFAULT_COMMAND= 'rg --files --hidden --follow --glob "!{.git/*,node_mo
 " # Markdown Composer settings
 " ---------------------------------------------------------
 let g:markdown_composer_open_browser = 0
-
-
-" ---------------------------------------------------------
-" # UltiSnips settings
-" ---------------------------------------------------------
-let g:UltiSnipsSnippetsDir = $HOME."/.vim/.vimsnippets"
-let g:UltiSnipsEditSplit="vertical"
-let g:UltiSnipsExpandTrigger="<c-k>"
-let g:UltiSnipsJumpForwardTrigger="<c-j>"
-let g:UltiSnipsJumpBackwardTrigger="<c-k>"
-let g:UltiSnipsListSnippets="<leader>l"
-let g:UltiSnipsSnippetDirectories=[
-      \ "UltiSips",
-      \ $HOME."/.vim/.vimsnippets"
-\ ]
 
 
 " =============================================================================
@@ -360,6 +346,10 @@ nnoremap tn  :tabnext<Space>
 nnoremap tm  :tabm<Space>
 nnoremap td  :tabclose<CR>
 
+nnoremap <C-H> <C-W><C-H>
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
 
 " =============================================================================
 " # Autocommands

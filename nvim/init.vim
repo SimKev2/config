@@ -68,6 +68,9 @@ Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
 " Auto pair brackets
 Plug 'jiangmiao/auto-pairs'
 
+" Distraction free writing
+Plug 'junegunn/goyo.vim'
+
 call plug#end()
 
 " =============================================================================
@@ -225,7 +228,7 @@ let g:gitgutter_realtime = 1
 if executable('rg')
   let g:ackprg = 'rg --vimgrep --no-heading'
 endif
-map <C-p> :LAck!<Space>
+map <C-p> :Ack!<Space>
 
 
 " ---------------------------------------------------------
@@ -258,7 +261,13 @@ let g:LanguageClient_serverCommands = {
 " \ 'sh': ['bash-language-server', 'start']
 " \ 'typescript': ['/usr/local/bin/javascript-typescript-stdio'],
 let g:LanguageClient_autoStart = 1
+let g:LanguageClient_diagnosticsList = 'Location'
+let g:LanguageClient_useFloatingHover = 1
 let g:deoplete#enable_at_startup = 1
+set completeopt-=preview
+" call deoplete#custom#option('sources', {
+"         \ 'python': ['LanguageClient'],
+"         \ })
 nnoremap <silent> gu :call LanguageClient_textDocument_references()<CR>
 nnoremap <silent> K :call LanguageClient_textDocument_hover()<CR>
 nnoremap <silent> gd :call LanguageClient_textDocument_definition()<CR>
@@ -290,6 +299,10 @@ let $FZF_DEFAULT_COMMAND= 'rg --files --hidden --follow --glob "!{.git/*,node_mo
 " ---------------------------------------------------------
 let g:markdown_composer_open_browser = 0
 
+" ---------------------------------------------------------
+" # Goyo Composer settings
+" ---------------------------------------------------------
+let g:goyo_width = 120
 
 " =============================================================================
 " # Editor settings

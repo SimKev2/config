@@ -8,7 +8,11 @@ export GPG_TTY=$(tty)
 export KUBECONFIG="/Users/kevinsimons/.kube/config:/Users/kevinsimons/workspace/EKS/kubeconfigs.yaml"
 export GOPRIVATE="github.com/Workiva/*,github.com/kevinsimons-wf/*"
 
+if [ -f '/usr/local/kubebuilder/bin/kubebuilder' ]; then export PATH=$PATH:/usr/local/kubebuilder/bin; fi
+
 if [ -f '/Users/kevinsimons/.creds/bash_env.sh' ]; then source '/Users/kevinsimons/.creds/bash_env.sh'; fi
+
+if [ -f '/Users/kevinsimons/.krew/bin/kubectl-krew' ]; then export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"; fi
 
 #-----------------------------------------------------------------------------
 # Aliases

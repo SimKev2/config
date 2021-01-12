@@ -51,7 +51,7 @@ parse_git_branch() {
 }
 
 # Put kubectl context on PS1
-export SHOW_KUBE_CONTEXT=0
+export SHOW_KUBE_CONTEXT=1
 kubectl_context() {
   if [ "$SHOW_KUBE_CONTEXT" = "1" ]; then
     grep current-context < ~/.kube/config | awk '{print $2}'
@@ -68,7 +68,7 @@ determine_minikube() {
 }
 
 # Terminal Prompt
-export PS1="${BOLD}\\u${RESET}@\\h:\$(determine_minikube) \\w${GREEN}\$(parse_git_branch)${RESET} ${BLUE}\$(kubectl_context)${RESET}\\n$ "
+export PS1="${BOLD}\\u${RESET}@\\h: \\w${GREEN}\$(parse_git_branch)${RESET}\$(determine_minikube) ${BLUE}\$(kubectl_context)${RESET}\\n$ "
 export PS2="$ "
 
 
@@ -127,6 +127,9 @@ complete -F _virtualEnvsComplete wa
 # Add kube context to PS1
 function show_kube_context () {
     export SHOW_KUBE_CONTEXT=1
+}
+function hide_kube_context () {
+    export SHOW_KUBE_CONTEXT=0
 }
 
 

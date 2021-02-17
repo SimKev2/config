@@ -14,7 +14,7 @@ RESET='\[\033[00m\]'
 #-------------------
 # Terminal Settings
 #-------------------
-export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;1m\]\u\[\033[00m\]@\h: \w\[\033[01;32m\]$(parse_git_branch)\[\033[00m\] \n$ '
+export PS1='${debian_chroot:+($debian_chroot)}\[\033[01;1m\]\u\[\033[00m\]@\h: \w\[\033[01;32m\]$(parse_git_branch)\[\033[00m\] \[\033[01;34m\]$(kubectl_context)\[\033[00m\]\n$ '
 export PS2='$ '
 
 bind 'set mark-symlinked-directories on'

@@ -71,6 +71,9 @@ Plug 'jiangmiao/auto-pairs'
 " Distraction free writing
 Plug 'junegunn/goyo.vim'
 
+" Personal wiki
+Plug 'vimwiki/vimwiki'
+
 call plug#end()
 
 " =============================================================================
@@ -83,14 +86,16 @@ syntax on
 " ---------------------------------------------------------
 " # Base16 settings
 " ---------------------------------------------------------
+set background=dark
 hi Normal ctermbg=NONE
+
 if filereadable(expand("~/.vimrc_background"))
   let base16colorspace=256
   source ~/.vimrc_background
+  colorscheme base16-default-dark
+else
+  colorscheme default
 endif
-set background=dark
-colorscheme base16-default-dark
-" colorscheme base16-brewer
 
 
 " ---------------------------------------------------------
@@ -99,16 +104,17 @@ colorscheme base16-default-dark
 if !has('gui_running')
   set t_Co=256
 endif
+" Shorter ALE messasges on airline
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 " Remove the Insert/Normal mode since it is on airline
 set noshowmode
+" Simplify mode names
 let g:airline_mode_map = {
   \ 'ic'     : 'Insert',
   \ 'ix'     : 'Insert',
   \ }
-let g:airline#extensions#ale#enabled = 1
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 
 " ---------------------------------------------------------
 " # NerdTree settings
@@ -144,19 +150,6 @@ function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
  exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'*\*\=$#'
 endfunction
 
-function! Filename(...)
-  let template = get(a:000, 0, "$1")
-  let arg2 = get(a:000, 1, "")
-
-  let basename = expand('%:t:r')
-
-  if basename == ''
-    return arg2
-  else
-    return substitute(template, '$1', basename, 'g')
-  endif
-endf
-
 call NERDTreeHighlightFile('md', 'blue', 'none', s:purpleLight, 'none')
 
 call NERDTreeHighlightFile('cfg', 'yellow', 'none', s:yellowLight, 'none')
@@ -164,6 +157,7 @@ call NERDTreeHighlightFile('conf', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('config', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('ini', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('json', 'yellow', 'none', s:yellowLight, 'none')
+call NERDTreeHighlightFile('tpl', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('xml', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('yaml', 'yellow', 'none', s:yellowLight, 'none')
 call NERDTreeHighlightFile('yml', 'yellow', 'none', s:yellowLight, 'none')
@@ -188,9 +182,9 @@ let g:ale_lint_on_enter = 0
 let g:ale_fix_on_save = 1
 
 let g:ale_linters = {
-    \ 'dart': ['dartanalyzer'],
     \ 'yaml': ['yamllint'],
     \ }
+    " \ 'dart': ['dartanalyzer'],
 
 function! OpaFmt(buffer)
     let winview = winsaveview()
@@ -303,6 +297,12 @@ let g:markdown_composer_open_browser = 0
 " # Goyo Composer settings
 " ---------------------------------------------------------
 let g:goyo_width = 120
+
+" ---------------------------------------------------------
+" # Vimwiki settings
+" ---------------------------------------------------------
+let g:vimwiki_list = [{'path': '~/workspace/vimwiki/wiki', 'path_html': '~/workspace/vimwiki/wiki_html', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0
 
 " =============================================================================
 " # Editor settings

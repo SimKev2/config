@@ -36,7 +36,7 @@ export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin:$HOME/.pub-cache/bin"
 
 # Set up rust source
-export PATH="$HOME/.cargo/bin:$PATH"
+source "$HOME/.cargo/env"
 export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
 
 # Set up java env

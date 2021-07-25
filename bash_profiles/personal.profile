@@ -26,6 +26,17 @@ set mark-symlinked-directories on
 alias grep="grep --color=auto"
 alias ls="ls --color=auto"
 
-source /usr/local/bin/wacomtabletmap
+#-----------------------------------------------------------------------------
+# Functions
+#-----------------------------------------------------------------------------
 
+function cb() {
+    print_code "git checkout -b $1 ${2:-upstream/master}";
+    git checkout -b "$1" "${2:-upstream/master}"
+}
+
+source $HOME/.local/bin/wacomtabletmap
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*

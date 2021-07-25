@@ -1,4 +1,4 @@
-let g:python_host_prog = expand('~/envs/py2neovim/bin/python')
+" let g:python_host_prog = expand('~/envs/py2neovim/bin/python')
 let g:python3_host_prog = expand('~/envs/py3neovim/bin/python')
 
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -120,7 +120,7 @@ let g:airline_mode_map = {
 " # NerdTree settings
 " ---------------------------------------------------------
 map <C-n> :NERDTreeToggle<CR>
-let g:NERDTreeWinSize = 50
+let g:NERDTreeWinSize = 40
 let g:NERDTreeIgnore = ['\.pyc$', '__pycache__', '\.egg-info$']
 let NERDTreeShowHidden = 1
 
@@ -243,17 +243,17 @@ set hidden
 let g:LanguageClient_serverCommands = {
     \ 'go': ['gopls'],
     \ 'python': ['pyls'],
-    \ 'rust': ['rustup', 'run', 'nightly', 'rls'],
+    \ 'rust': ['rust-analyzer'],
+    \ 'javascript': ['typescript-language-server', '--stdio'],
+    \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
+    \ 'typescript': ['typescript-language-server', '--stdio'],
     \ }
 
 " \ 'dart': ['dart_language_server'],
 " \ 'dockerfile': ['docker-langserver', '--stdio'],
 " \ 'java': ['/Users/kevinsimons/tools/java-language-server/dist/lang_server_mac.sh', '--quiet'],
-" \ 'javascript': ['/usr/local/bin/javascript-typescript-stdio'],
-" \ 'javascript.jsx': ['/usr/local/bin/javascript-typescript-stdio'],
 " \ 'ruby': ['solargraph', 'stdio'],
 " \ 'sh': ['bash-language-server', 'start']
-" \ 'typescript': ['/usr/local/bin/javascript-typescript-stdio'],
 let g:LanguageClient_autoStart = 1
 let g:LanguageClient_diagnosticsList = 'Location'
 let g:LanguageClient_useFloatingHover = 1
@@ -351,7 +351,7 @@ set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*/node_modules/*
 
 :nmap <C-f> :FZF<CR>
 " Yank to the clipboard
-map <C-c> "*y
+map <C-c> "+y
 
 nnoremap th  :tabfirst<CR>
 nnoremap tj  :tabnext<CR>
@@ -388,8 +388,8 @@ autocmd FileType rust nmap <leader>c :call TermSplitCmd("cargo build")<CR>
 autocmd FileType rust set makeprg=cargo\ build
 autocmd Filetype rust set colorcolumn=100
 
-autocmd Filetype javascript setlocal tabstop=2 shiftwidth=2 colorcolumn=100
-autocmd Filetype typescript setlocal tabstop=2 shiftwidth=2 colorcolumn=100
+autocmd Filetype javascript setlocal tabstop=4 shiftwidth=4 colorcolumn=100
+autocmd Filetype typescript setlocal tabstop=4 shiftwidth=4 colorcolumn=100
 
 autocmd Filetype rego setlocal autoindent noexpandtab tabstop=4 shiftwidth=4 colorcolumn=100
 

@@ -1,3 +1,6 @@
+set shell=/bin/bash
+let mapleader = "\<Space>"
+
 " let g:python_host_prog = expand('~/envs/py2neovim/bin/python')
 let g:python3_host_prog = expand('~/envs/py3neovim/bin/python')
 
@@ -181,6 +184,10 @@ let g:ale_lint_on_save = 1
 let g:ale_lint_on_enter = 0
 let g:ale_fix_on_save = 1
 
+" Mypy in virtualenv fix
+" https://mypy.readthedocs.io/en/stable/running_mypy.html#unable-to-find-module
+let g:ale_python_mypy_options = '--python-executable=$(which python)'
+
 let g:ale_linters = {
     \ 'yaml': ['yamllint'],
     \ }
@@ -229,7 +236,7 @@ map <C-p> :Ack!<Space>
 " # Racer settings
 " ---------------------------------------------------------
 let g:rustfmt_autosave = 1
-let g:rustfmt_fail_silently = 1
+let g:rustfmt_fail_silently = 0
 let $RUST_SRC_PATH = systemlist("rustc --print sysroot")[0] . "/lib/rustlib/src/rust/src"
 let g:racer_cmd = expand("~/.cargo/bin/racer")
 let g:racer_experimental_completer = 1
@@ -366,6 +373,15 @@ nnoremap <C-H> <C-W><C-H>
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
+
+" Vim productivity : https://sheerun.net/2014/03/21/how-to-boost-your-vim-productivity/
+nnoremap <Leader>w :w<CR>
+nnoremap <Leader>w<CR> :w<CR>
+nnoremap <Leader>wq :wq<CR>
+nnoremap <Leader>wq<CR> :wq<CR>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>q<CR> :q<CR>
+nnoremap <Leader>f :FZF<CR>
 
 " =============================================================================
 " # Autocommands

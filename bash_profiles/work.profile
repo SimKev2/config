@@ -7,12 +7,15 @@ export BASH_SILENCE_DEPRECATION_WARNING=1
 export GPG_TTY=$(tty)
 export KUBECONFIG="/Users/kevinsimons/.kube/config:/Users/kevinsimons/workspace/EKS/kubeconfigs.yaml"
 export GOPRIVATE="github.com/Workiva/*,github.com/kevinsimons-wf/*"
-
 if [ -f '/usr/local/kubebuilder/bin/kubebuilder' ]; then export PATH=$PATH:/usr/local/kubebuilder/bin; fi
 
 if [ -f '/Users/kevinsimons/.creds/bash_env.sh' ]; then source '/Users/kevinsimons/.creds/bash_env.sh'; fi
 
 if [ -f '/Users/kevinsimons/.krew/bin/kubectl-krew' ]; then export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"; fi
+
+export NPM_CONFIG__AUTH=$(echo -n "$ARTIFACTORY_PRO_USER:$ARTIFACTORY_PRO_PASS" | base64)
+export NPM_CONFIG_ALWAYS_AUTH=true
+export NPM_CONFIG_REGISTRY=https://workivaeast.jfrog.io/workivaeast/api/npm/npm-prod/
 
 #-----------------------------------------------------------------------------
 # Aliases
@@ -141,3 +144,6 @@ function gifenc() {
         ffmpeg -v warning -i "$1" -i "$palette" -lavfi "$filters [x]; [x][1:v] paletteuse" -y "$2";
     fi
 }
+
+export PATH="$PATH:$HOME/.gem/ruby/3.0.0/bin"
+eval "$(rbenv init -)"

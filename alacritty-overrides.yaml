@@ -11,16 +11,6 @@ window:
     x: 2
     y: 2
 
-  dynamic_padding: false
-  decorations: full
-  startup_mode: Windowed
-  title: Alacritty
-  dynamic_title: true
-
-scrolling:
-  history: 10000
-  multiplier: 3
-
 font:
   normal:
     family: Menlo
@@ -114,8 +104,6 @@ mouse:
   double_click: { threshold: 300 }
   triple_click: { threshold: 300 }
   hide_when_typing: false
-  url:
-    modifiers: Shift
 
 mouse_bindings:
   - { mouse: Middle, action: PasteSelection }
@@ -143,4 +131,3 @@ key_bindings:
   - { key: W,      mods: Command,            action: Quit             }
   - { key: N,      mods: Command,            action: SpawnNewInstance }
   - { key: F,      mods: Command|Control,    action: ToggleFullscreen }
-  - { key: N,      mods: Command,            command: { program: "open", args: ["-n", "/Applications/Alacritty.app"] } }

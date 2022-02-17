@@ -32,6 +32,15 @@ function cb() {
     git checkout -b "$1" "${2:-upstream/master}"
 }
 
+function cbpr() {
+    # use as `cbpr https://github.com/Workiva/<repo>/pull/<pull ID>`
+    prId="${1##*/}" # prId=<pull ID>
+    print_code "git fetch upstream pull/$prId/head:pr-$prId"
+    git fetch upstream pull/$prId/head:pr-$prId
+    print_code "git checkout pr-$prId"
+    git checkout pr-$prId
+}
+
 function new-day() {
     orig_dir=$(pwd);
     projects=$(ll ~/workspace | awk '{print $9}' | grep '^[^\._]');
@@ -147,3 +156,5 @@ function gifenc() {
 
 export PATH="$PATH:$HOME/.gem/ruby/3.0.0/bin"
 eval "$(rbenv init -)"
+export PATH="/usr/local/opt/curl/bin:$PATH"
+export PATH="/Users/kevinsimons/.wk/bin:$PATH"

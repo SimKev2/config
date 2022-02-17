@@ -249,7 +249,7 @@ set hidden
 " ---------------------------------------------------------
 let g:LanguageClient_serverCommands = {
     \ 'go': ['gopls'],
-    \ 'python': ['pyls'],
+    \ 'python': ['/Users/kevinsimons/envs/py3neovim/bin/pyls'],
     \ 'rust': ['rust-analyzer'],
     \ 'javascript': ['typescript-language-server', '--stdio'],
     \ 'javascript.jsx': ['typescript-language-server', '--stdio'],

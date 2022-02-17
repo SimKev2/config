@@ -1,0 +1,12 @@
+[alias]
+	co = checkout
+[commit]
+	gpgsign = true
+[core]
+	excludesFile = ~/.gitignore_global
+[push]
+	default = current
+[url "git@github.com:"]
+	insteadOf = https://github.com
+[gpg]
+	program = gpg

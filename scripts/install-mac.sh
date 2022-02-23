@@ -45,6 +45,7 @@ if [[ ! -f /usr/local/bin/minikube ]]
 then
     curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-arm64
     sudo install minikube-darwin-arm64 /usr/local/bin/minikube
+    rm minikube-darwin-arm64
 fi
 
 # Set up base16 color scheme

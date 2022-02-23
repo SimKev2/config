@@ -30,6 +30,7 @@ export EDITOR="$VISUAL"
 # Set up pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
+export PATH="$PYENV_ROOT/shims:$PATH"
 
 # Set up golang paths
 export GOPATH="$HOME/go"

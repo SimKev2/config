@@ -155,6 +155,8 @@ function gifenc() {
 }
 
 export PATH="$PATH:$HOME/.gem/ruby/3.0.0/bin"
-eval "$(rbenv init -)"
+if [ -f '/usr/local/bin/rbenv' ]; then eval "$(rbenv init -)"; fi
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/Users/kevinsimons/.wk/bin:$PATH"
+export BASH_SILENCE_DEPRECATION_WARNING=1
+eval "$(/opt/homebrew/bin/brew shellenv)"

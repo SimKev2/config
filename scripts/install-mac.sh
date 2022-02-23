@@ -6,14 +6,22 @@ then
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-/opt/homebrew/bin/brew install gnupg
-/opt/homebrew/bin/brew install neovim
-/opt/homebrew/bin/brew install kubectl
-/opt/homebrew/bin/brew install go
-/opt/homebrew/bin/brew install helm
-/opt/homebrew/bin/brew install pyenv
+UNAME_MACHINE=$(/usr/bin/uname -m)
+if [[ "$UNAME_MACHINE" == "arm64" ]]
+then
+    HOMEBREW_PREFIX="/opt/homebrew"
+else
+    HOMEBREW_PREFIX="/usr/local"
+fi
+
+$HOMEBREW_PREFIX/bin/brew install gnupg
+$HOMEBREW_PREFIX/bin/brew install neovim
+$HOMEBREW_PREFIX/bin/brew install kubectl
+$HOMEBREW_PREFIX/bin/brew install go
+$HOMEBREW_PREFIX/bin/brew install helm
+$HOMEBREW_PREFIX/bin/brew install pyenv
 # Python build dependencies for pyenv installations of python
-/opt/homebrew/bin/brew install openssl readline sqlite3 xz zlib
+$HOMEBREW_PREFIX/bin/brew install openssl readline sqlite3 xz zlib
 
 # Install rustlang
 if [[ ! -f "$HOME/.cargo/bin/rustup" ]]

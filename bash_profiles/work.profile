@@ -159,4 +159,10 @@ if [ -f '/usr/local/bin/rbenv' ]; then eval "$(rbenv init -)"; fi
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/Users/kevinsimons/.wk/bin:$PATH"
 export BASH_SILENCE_DEPRECATION_WARNING=1
-eval "$(/opt/homebrew/bin/brew shellenv)"
+UNAME_MACHINE=$(/usr/bin/uname -m)
+if [[ "$UNAME_MACHINE" == "arm64" ]]
+then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+    eval "$(/usr/local/bin/brew shellenv)"
+fi

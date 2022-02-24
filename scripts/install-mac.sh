@@ -17,11 +17,18 @@ fi
 $HOMEBREW_PREFIX/bin/brew install gnupg
 $HOMEBREW_PREFIX/bin/brew install neovim
 $HOMEBREW_PREFIX/bin/brew install kubectl
+$HOMEBREW_PREFIX/bin/brew install aws-iam-authenticator
+$HOMEBREW_PREFIX/bin/brew install jq
+$HOMEBREW_PREFIX/bin/brew install yq
 $HOMEBREW_PREFIX/bin/brew install go
 $HOMEBREW_PREFIX/bin/brew install helm
 $HOMEBREW_PREFIX/bin/brew install pyenv
+$HOMEBREW_PREFIX/bin/brew install --cask gitify
 # Python build dependencies for pyenv installations of python
 $HOMEBREW_PREFIX/bin/brew install openssl readline sqlite3 xz zlib
+
+$HOMEBREW_PREFIX/bin/brew tap hashicorp/tap
+$HOMEBREW_PREFIX/bin/brew install hashicorp/tap/vault
 
 # Install rustlang
 if [[ ! -f "$HOME/.cargo/bin/rustup" ]]

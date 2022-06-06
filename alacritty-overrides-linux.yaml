@@ -19,16 +19,16 @@ scrolling:
 
 font:
   normal:
-    family: monospace
+    family: BitstreamVeraSansMono Nerd Font Mono
 
   bold:
-    family: monospace
+    family: BitstreamVeraSansMono Nerd Font Mono
 
   italic:
-    family: monospace
+    family: BitstreamVeraSansMono Nerd Font Mono
 
   bold_italic:
-    family: monospace
+    family: BitstreamVeraSansMono Nerd Font Mono
 
   size: 12.0
 

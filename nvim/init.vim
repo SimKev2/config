@@ -207,7 +207,7 @@ let g:ale_fixers = {
     \ 'javascript.jsx': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
     \ 'typescript': ['remove_trailing_lines', 'trim_whitespace', 'prettier', 'eslint'],
     \ 'markdown': ['remove_trailing_lines', 'trim_whitespace'],
-    \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'yapf'],
+    \ 'python': ['remove_trailing_lines', 'trim_whitespace', 'black', 'yapf'],
     \ 'rust': ['remove_trailing_lines', 'trim_whitespace', 'rustfmt']
     \ }
     " \ 'rego': ['remove_trailing_lines', 'trim_whitespace', "OpaFmt"]
@@ -250,12 +250,13 @@ set hidden
 let g:LanguageClient_serverCommands = {
     \ 'go': ['gopls'],
     \ 'python': ['/Users/kevinsimons/envs/py3neovim/bin/pyls'],
-    \ 'rust': ['rust-analyzer'],
+    \ 'rust': ['rls'],
     \ 'javascript': ['typescript-language-server', '--stdio'],
     \ 'javascript.jsx': ['typescript-language-server', '--stdio'],
     \ 'typescript': ['typescript-language-server', '--stdio'],
     \ }
 
+" \ 'rust': ['rust-analyzer'],
 " \ 'dart': ['dart_language_server'],
 " \ 'dockerfile': ['docker-langserver', '--stdio'],
 " \ 'java': ['/Users/kevinsimons/tools/java-language-server/dist/lang_server_mac.sh', '--quiet'],

@@ -24,11 +24,14 @@ $HOMEBREW_PREFIX/bin/brew install go
 $HOMEBREW_PREFIX/bin/brew install helm
 $HOMEBREW_PREFIX/bin/brew install pyenv
 $HOMEBREW_PREFIX/bin/brew install --cask gitify
+$HOMEBREW_PREFIX/bin/brew install ripgrep
+$HOMEBREW_PREFIX/bin/brew install tfenv
 # Python build dependencies for pyenv installations of python
 $HOMEBREW_PREFIX/bin/brew install openssl readline sqlite3 xz zlib
 
 $HOMEBREW_PREFIX/bin/brew tap hashicorp/tap
 $HOMEBREW_PREFIX/bin/brew install hashicorp/tap/vault
+
 
 # Install rustlang
 if [[ ! -f "$HOME/.cargo/bin/rustup" ]]
@@ -53,6 +56,7 @@ if [[ ! -d "$HOME/envs/py3neovim" ]]
 then
     $HOME/.pyenv/shims/virtualenv --python=$HOME/.pyenv/shims/python3 ~/envs/py3neovim
     $HOME/envs/py3neovim/bin/pip install neovim
+    $HOME/envs/py3neovim/bin/pip install python-language-server
 fi
 
 # Install minikube

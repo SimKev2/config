@@ -59,6 +59,13 @@ then
     $HOME/envs/py3neovim/bin/pip install python-language-server
 fi
 
+# Set up python lsp server for neovim
+if [[ ! -f $HOME/envs/py3neovim/bin/pylsp ]]
+then
+    $HOME/envs/py3neovim/bin/pip install "python-lsp-server[all]"
+    sudo ln -s $HOME/envs/py3neovim/bin/pylsp /usr/local/bin/
+fi
+
 # Install minikube
 if [[ ! -f /usr/local/bin/minikube ]]
 then

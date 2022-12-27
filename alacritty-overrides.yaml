@@ -15,18 +15,18 @@ window:
 
 font:
   normal:
-    family: Menlo
+    family: DejaVuSansMono Nerd Font
 
   bold:
-    family: Menlo
+    family: DejaVuSansMono Nerd Font
 
   italic:
-    family: Menlo
+    family: DejaVuSansMono Nerd Font
 
   bold_italic:
-    family: Menlo
+    family: DejaVuSansMono Nerd Font
 
-  size: 12.0
+  size: 14.0
 
   offset:
     x: 0

@@ -158,7 +158,9 @@ export PATH="$PATH:$HOME/.gem/ruby/3.0.0/bin"
 if [ -f '/usr/local/bin/rbenv' ]; then eval "$(rbenv init -)"; fi
 export PATH="/usr/local/opt/curl/bin:$PATH"
 export PATH="/Users/kevinsimons/.wk/bin:$PATH"
+export PATH="/Users/kevinsimons/.local/bin:$PATH"
 export BASH_SILENCE_DEPRECATION_WARNING=1
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 UNAME_MACHINE=$(/usr/bin/uname -m)
 if [[ "$UNAME_MACHINE" == "arm64" ]]
 then

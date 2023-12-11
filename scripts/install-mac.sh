@@ -1,10 +1,5 @@
 #! /bin/bash
-which brew
-BREW_STATUS=$?
-if [[ $BREW_STATUS -eq 1 ]]
-then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
+defaults write -g AppleFontSmoothing -int 0
 
 UNAME_MACHINE=$(/usr/bin/uname -m)
 if [[ "$UNAME_MACHINE" == "arm64" ]]
@@ -12,6 +7,11 @@ then
     HOMEBREW_PREFIX="/opt/homebrew"
 else
     HOMEBREW_PREFIX="/usr/local"
+fi
+
+if [[ ! -f $HOMEBREW_PREFIX/bin/brew ]]
+then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 $HOMEBREW_PREFIX/bin/brew install gnupg
@@ -26,6 +26,8 @@ $HOMEBREW_PREFIX/bin/brew install pyenv
 $HOMEBREW_PREFIX/bin/brew install --cask gitify
 $HOMEBREW_PREFIX/bin/brew install ripgrep
 $HOMEBREW_PREFIX/bin/brew install tfenv
+$HOMEBREW_PREFIX/bin/brew install fzf
+$HOMEBREW_PREFIX/bin/brew install tmux
 # Python build dependencies for pyenv installations of python
 $HOMEBREW_PREFIX/bin/brew install openssl readline sqlite3 xz zlib
 
@@ -40,12 +42,12 @@ then
 fi
 
 # Install latest python3 and make default
-LATEST_PYTHON=$(pyenv install --list | grep -E "^\s*[0-9]+\.[0-9]+\.[0-9]+$" | tail -n 1 | xargs) # xargs trims whitespace
+LATEST_PYTHON=$($HOMEBREW_PREFIX/bin/pyenv install --list | grep -E "^\s*[0-9]+\.[0-9]+\.[0-9]+$" | tail -n 1 | xargs) # xargs trims whitespace
 echo "Latest python version install : $LATEST_PYTHON"
 if [[ ! -d "$HOME/.pyenv/versions/$LATEST_PYTHON" ]]
 then
-    pyenv install $LATEST_PYTHON
-    pyenv global $LATEST_PYTHON
+    $HOMEBREW_PREFIX/bin/pyenv install $LATEST_PYTHON
+    $HOMEBREW_PREFIX/bin/pyenv global $LATEST_PYTHON
 fi
 $HOME/.pyenv/shims/pip install -U pip
 
@@ -57,13 +59,15 @@ then
     $HOME/.pyenv/shims/virtualenv --python=$HOME/.pyenv/shims/python3 ~/envs/py3neovim
     $HOME/envs/py3neovim/bin/pip install neovim
     $HOME/envs/py3neovim/bin/pip install python-language-server
+    $HOME/envs/py3neovim/bin/pip install black
 fi
 
 # Set up python lsp server for neovim
 if [[ ! -f $HOME/envs/py3neovim/bin/pylsp ]]
 then
     $HOME/envs/py3neovim/bin/pip install "python-lsp-server[all]"
-    sudo ln -s $HOME/envs/py3neovim/bin/pylsp /usr/local/bin/
+    $HOME/envs/py3neovim/bin/pip install "python-lsp-black"
+    sudo ln -sf $HOME/envs/py3neovim/bin/pylsp /usr/local/bin/
 fi
 
 # Install minikube
@@ -77,11 +81,18 @@ fi
 # Set up base16 color scheme
 if [[ ! -f ~/.vimrc_background ]]
 then
-    eval "$("$BASE16_SHELL/profile_helper.sh")"
-    base16_default-dark
+    source "$HOME/config/shell/base16-shell/profile_helper.sh"
+    source "$HOME/config/shell/base16-shell/scripts/base16-default-dark.sh"
+fi
+
+if [[ ! -d "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/start/paq-nvim ]]
+then
+    git clone --depth=1 https://github.com/savq/paq-nvim.git \
+        "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/start/paq-nvim
 fi
 
 echo
 echo "NOTES :"
 echo "  Set up GPG key : https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key"
 echo "  Run \"vim ~/.vim/plugged/LanguageClient-neovim/rust-toolchain\" and edit to 1.57.0 before starting nvim"
+echo "  Install nerd font https://www.nerdfonts.com/font-downloads \"DejaVu Sans Mono Nerd Font Complete\" file from zip"

@@ -154,6 +154,10 @@ function gifenc() {
     fi
 }
 
+function k-drain() {
+    kubectl drain --delete-emptydir-data --disable-eviction --force --grace-period=1 --ignore-daemonsets ${1}
+}
+
 export PATH="$PATH:$HOME/.gem/ruby/3.0.0/bin"
 if [ -f '/usr/local/bin/rbenv' ]; then eval "$(rbenv init -)"; fi
 export PATH="/usr/local/opt/curl/bin:$PATH"
@@ -168,3 +172,4 @@ then
 else
     eval "$(/usr/local/bin/brew shellenv)"
 fi
+export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"

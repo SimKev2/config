@@ -1,9 +1,14 @@
+local home = os.getenv('HOME')
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
   if opts then options = vim.tbl_extend('force', options, opts) end
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 vim.cmd 'let mapleader = " "'
+vim.g.python3_host_prog = "$HOME/envs/py3neovim/bin/python"
+
+-- TODO figure out how to set this conditionally in lua https://github.com/chriskempson/base16-shell
+vim.cmd("colorscheme base16-$BASE16_THEME")
 
 require "paq" {
     -- Let Paq manage itself
@@ -17,17 +22,25 @@ require "paq" {
     "kyazdani42/nvim-web-devicons"; -- Requires patched font
     "kyazdani42/nvim-tree.lua";
 
-    -- Code Completion
-    "hrsh7th/nvim-compe";
     -- Common configs for builtin language client
     "neovim/nvim-lspconfig";
+
+    -- Code Completion
+    "hrsh7th/cmp-nvim-lsp";
+    "hrsh7th/cmp-buffer";
+    "hrsh7th/cmp-path";
+    "hrsh7th/cmp-cmdline";
+    "hrsh7th/nvim-cmp";
+    -- Snippet engine
+    "hrsh7th/vim-vsnip";
+    "hrsh7th/vim-vsnip-integ";
 
     -- Syntax highlighting / parsing
     "windwp/nvim-autopairs";
     "nvim-treesitter/nvim-treesitter";
 
     -- Fuzzy File Search
-    {"junegunn/fzf", run = vim.fn['fzf#install']};
+    {"junegunn/fzf", build = vim.fn['fzf#install']};
     "junegunn/fzf.vim";
 
     -- Fuzzy Text Search
@@ -46,39 +59,102 @@ require "paq" {
 }
 
 
-require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 1;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  resolve_timeout = 800;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = {
-    border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
-    winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
-    max_width = 120,
-    min_width = 60,
-    max_height = math.floor(vim.o.lines * 0.3),
-    min_height = 1,
-  };
+-- require'compe'.setup {
+--   enabled = true;
+--   autocomplete = true;
+--   debug = false;
+--   min_length = 1;
+--   preselect = 'enable';
+--   throttle_time = 80;
+--   source_timeout = 200;
+--   resolve_timeout = 800;
+--   incomplete_delay = 400;
+--   max_abbr_width = 100;
+--   max_kind_width = 100;
+--   max_menu_width = 100;
+--   documentation = {
+--     border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
+--     winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
+--     max_width = 120,
+--     min_width = 60,
+--     max_height = math.floor(vim.o.lines * 0.3),
+--     min_height = 1,
+--   };
+-- 
+--   source = {
+--     path = true;
+--     buffer = true;
+--     calc = true;
+--     nvim_lsp = true;
+--     nvim_lua = true;
+--     vsnip = true;
+--     ultisnips = true;
+--     luasnip = true;
+--   };
+-- }
 
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-    vsnip = true;
-    ultisnips = true;
-    luasnip = true;
-  };
+local cmp = require'cmp'
+cmp.setup {
+  snippet = {
+    -- REQUIRED - you must specify a snippet engine
+    expand = function(args)
+      vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+    end,
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.abort(),
+    ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    ['<Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback()
+      end
+      -- if not cmp.select_next_item() then
+      --   if vim.bo.buftype ~= 'prompt' and has_words_before() then
+      --     cmp.complete()
+      --   else
+      --     fallback()
+      --   end
+      -- end
+    end,
+    ['<S-Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback()
+      end
+      -- if not cmp.select_prev_item() then
+      --   if vim.bo.buftype ~= 'prompt' and has_words_before() then
+      --     cmp.complete()
+      --   else
+      --     fallback()
+      --   end
+      -- end
+    end,
+  }),
+  sources = cmp.config.sources({
+    { name = 'nvim_lsp' },
+    { name = 'vsnip' }, -- For vsnip users.
+  }, {
+    { name = 'buffer' },
+  })
 }
+
+
+-- If you want insert `(` after select function or method item
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
 
 require'nvim-autopairs'.setup({
     check_tx = true,
@@ -89,10 +165,10 @@ require'nvim-autopairs'.setup({
         java = false,
     }
 })
-require'nvim-autopairs.completion.compe'.setup({
-    map_cr = true,
-    map_complete = true
-})
+-- require'nvim-autopairs.completion.compe'.setup({
+--     map_cr = true,
+--     map_complete = true
+-- })
 require'nvim-treesitter.configs'.setup {
     autotag = {
       enable = true,
@@ -124,7 +200,6 @@ require'nvim-tree'.setup{
         ignore = false,
         timeout = 400,
     },
-    open_on_setup = true,
     open_on_tab = true,
 }
 require'nvim-web-devicons'.setup{
@@ -138,6 +213,8 @@ local opts = { noremap=true, silent=true }
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 local on_attach_common = function(client, bufnr)
     print("LSP started.");
     vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -148,10 +225,11 @@ local on_attach_common = function(client, bufnr)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, bufopts)
 
-    if client.resolved_capabilities.document_formatting then
+    if client.server_capabilities.document_formatting then
         vim.cmd [[augroup Format]]
         vim.cmd [[autocmd! * <buffer>]]
-        vim.cmd [[autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting()]]
+        --vim.cmd [[autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting()]]
+        vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
         vim.cmd [[augroup END]]
     end
 end
@@ -165,27 +243,31 @@ local eslint_d = {
 }
 require'lspconfig'.pylsp.setup{
     on_attach = function(client, bufnr)
-        client.resolved_capabilities.document_formatting = true
+        client.server_capabilities.document_formatting = true
         on_attach_common(client, bufnr)
     end,
+    capabilities = capabilities
 }
 require'lspconfig'.rust_analyzer.setup{
     on_attach = function(client)
-        client.resolved_capabilities.document_formatting = true
+        client.server_capabilities.document_formatting = true
         on_attach_common(client, bufnr)
-    end
+    end,
+    capabilities = capabilities
 }
 require'lspconfig'.tsserver.setup{
     on_attach = function(client)
-        client.resolved_capabilities.document_formatting = false
+        client.server_capabilities.document_formatting = false
         on_attach_common(client, bufnr)
-    end
+    end,
+    capabilities = capabilities
 }
 require'lspconfig'.efm.setup({
     on_attach = function(client)
-        client.resolved_capabilities.document_formatting = true
+        client.server_capabilities.document_formatting = true
         on_attach_common(client, bufnr)
     end,
+    capabilities = capabilities,
     init_options = {documentFormatting = true},
     filetypes = {"javascript","typescript","typescriptreact","javascriptreact","javascript.jsx","typscript.tsx"},
     settings = {
@@ -197,6 +279,13 @@ require'lspconfig'.efm.setup({
         }
     }
 })
+require'lspconfig'.gopls.setup{
+    on_attach = function(client, bufnr)
+        client.server_capabilities.document_formatting = false
+        on_attach_common(client, bufnr)
+    end,
+    capabilities = capabilities
+}
 require'lspfuzzy'.setup{} -- Make the LSP client use FZF instead of quickfix list
 
 
@@ -205,8 +294,8 @@ require'lspfuzzy'.setup{} -- Make the LSP client use FZF instead of quickfix lis
 -- require'plantuml-previewer'.setup{}
 
 -- <Tab> to navigate the completion menu
-map('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true})
-map('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', {expr = true})
+-- map('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', {expr = true})
+-- map('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', {expr = true})
 
 -- ################################################################################################
 -- # General Vim options
@@ -214,7 +303,6 @@ map('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<Tab>"', {expr = true})
 -- vim.cmd 'syntax on'
 vim.opt.background = "dark"
 vim.cmd 'hi Normal ctermbg=NONE'
-vim.cmd 'source ~/.vimrc_background'
 -- vim.cmd 'filetype plugin indent on'
 
 map('n', '<Leader>w', ':w<CR>')
@@ -228,6 +316,8 @@ map('n', '<Leader>f', ':FZF<CR>')
 
 vim.g['ackprg'] = 'rg --vimgrep --no-heading'
 vim.g['fzf_buffers_jump'] = 1
+
+vim.opt.mouse = "i"
 
 vim.opt.colorcolumn = "100"              -- Column limit
 vim.opt.completeopt = "menuone,noselect" -- Completion options

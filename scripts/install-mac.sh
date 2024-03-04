@@ -70,6 +70,12 @@ then
     sudo ln -sf $HOME/envs/py3neovim/bin/pylsp /usr/local/bin/
 fi
 
+# Set up golang lsp server for neovim
+if [[ ! -f $HOME/go/bin/gopls ]]
+then
+    $HOMEBREW_PREFIX/bin/go install golang.org/x/tools/gopls@latest
+fi
+
 # Install minikube
 if [[ ! -f /usr/local/bin/minikube ]]
 then

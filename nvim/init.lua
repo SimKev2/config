@@ -216,7 +216,7 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local on_attach_common = function(client, bufnr)
-    print("LSP started.");
+    -- print("LSP started.");
     vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
     local bufopts = { noremap=true, silent=true, buffer=0 }
 
@@ -229,7 +229,7 @@ local on_attach_common = function(client, bufnr)
         vim.cmd [[augroup Format]]
         vim.cmd [[autocmd! * <buffer>]]
         --vim.cmd [[autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting()]]
-        vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()]]
+        vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format({async=false})]]
         vim.cmd [[augroup END]]
     end
 end
@@ -317,7 +317,7 @@ map('n', '<Leader>f', ':FZF<CR>')
 vim.g['ackprg'] = 'rg --vimgrep --no-heading'
 vim.g['fzf_buffers_jump'] = 1
 
-vim.opt.mouse = "i"
+vim.opt.mouse = ""
 
 vim.opt.colorcolumn = "100"              -- Column limit
 vim.opt.completeopt = "menuone,noselect" -- Completion options

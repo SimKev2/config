@@ -20,6 +20,8 @@ export PS2='$ '
 bind 'set mark-symlinked-directories on'
 set mark-symlinked-directories on
 
+export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!{.git/*,node_modules/*,vendor/*,**/*.un~}" 2> /dev/null'
+
 #-------------------
 # Aliases
 #-------------------

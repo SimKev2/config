@@ -17,7 +17,7 @@ RESET="\e[0m"
 #-----------------------------------------------------------------------------
 if [[ -e $HOME/config/shell ]]; then
   BASE16_SHELL=$HOME/config/shell/base16-shell/
-  [ -n "$PS1" ] && [ -s "$BASE16_SHELL"/profile_helper.sh ] && eval "$("$BASE16_SHELL"/profile_helper.sh)"
+  [ -n "$PS1" ] && [ -s "$BASE16_SHELL"/profile_helper.sh ] && source "$BASE16_SHELL/profile_helper.sh"
 else
   echo "No shell configs";
 fi
@@ -37,8 +37,7 @@ export GOPATH="$HOME/go"
 export PATH="$PATH:$GOPATH/bin:$HOME/.pub-cache/bin"
 
 # Set up rust source
-source "$HOME/.cargo/env"
-export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/src"
+export RUST_SRC_PATH="$($HOME/.cargo/bin/rustc --print sysroot)/lib/rustlib/src/rust/src"
 
 # Set up java env
 export JAVA_HOME="/Library/Java/JavaVirtualMachines/openjdk-13.jdk/Contents/Home/"
@@ -69,6 +68,7 @@ determine_minikube() {
 }
 
 # Terminal Prompt
+export PS0="${MAGENTA}\D{%F %T}${RESET}\\n"
 export PS1="${BOLD}\\u${RESET}@\\h: \\w${GREEN}\$(parse_git_branch)${RESET}\$(determine_minikube) ${BLUE}\$(kubectl_context)${RESET}\\n$ "
 export PS2="$ "
 
@@ -149,3 +149,5 @@ eval "$(pyenv init -)"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 # eval "$(nodenv init -)"
+. "$HOME/.cargo/env"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

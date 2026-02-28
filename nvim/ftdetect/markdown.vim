@@ -1,1 +1,1 @@
-autocmd Filetype markdown setlocal spell tw=99 colorcolumn=100
+autocmd Filetype markdown setlocal spell tw=100 colorcolumn=100

@@ -17,6 +17,7 @@ fi
 $HOMEBREW_PREFIX/bin/brew install gnupg
 $HOMEBREW_PREFIX/bin/brew install neovim
 $HOMEBREW_PREFIX/bin/brew install kubectl
+$HOMEBREW_PREFIX/bin/brew install derailed/k9s/k9s
 $HOMEBREW_PREFIX/bin/brew install aws-iam-authenticator
 $HOMEBREW_PREFIX/bin/brew install jq
 $HOMEBREW_PREFIX/bin/brew install yq
@@ -28,12 +29,12 @@ $HOMEBREW_PREFIX/bin/brew install ripgrep
 $HOMEBREW_PREFIX/bin/brew install tfenv
 $HOMEBREW_PREFIX/bin/brew install fzf
 $HOMEBREW_PREFIX/bin/brew install tmux
+$HOMEBREW_PREFIX/bin/brew install coreutils
 # Python build dependencies for pyenv installations of python
 $HOMEBREW_PREFIX/bin/brew install openssl readline sqlite3 xz zlib
 
 $HOMEBREW_PREFIX/bin/brew tap hashicorp/tap
 $HOMEBREW_PREFIX/bin/brew install hashicorp/tap/vault
-
 
 # Install rustlang
 if [[ ! -f "$HOME/.cargo/bin/rustup" ]]
@@ -67,6 +68,7 @@ if [[ ! -f $HOME/envs/py3neovim/bin/pylsp ]]
 then
     $HOME/envs/py3neovim/bin/pip install "python-lsp-server[all]"
     $HOME/envs/py3neovim/bin/pip install "python-lsp-black"
+    $HOME/envs/py3neovim/bin/pip install "py-lsp-mypy"
     sudo ln -sf $HOME/envs/py3neovim/bin/pylsp /usr/local/bin/
 fi
 
@@ -75,6 +77,32 @@ if [[ ! -f $HOME/go/bin/gopls ]]
 then
     $HOMEBREW_PREFIX/bin/go install golang.org/x/tools/gopls@latest
 fi
+
+# Set up jsonnet
+if [[ ! -f $HOMEBREW_PREFIX/bin/jsonnet ]]
+then
+    $HOMEBREW_PREFIX/bin/brew install jsonnet
+    $HOMEBREW_PREFIX/bin/go install github.com/google/go-jsonnet/cmd/jsonnet@latest
+fi
+
+# Set up tanka
+if [[ ! -f $HOMEBREW_PREFIX/bin/tk ]]
+then
+    $HOMEBREW_PREFIX/bin/brew install tanka
+fi
+
+# Set up Jsonnet Bundler
+if [[ ! -f $HOMEBREW_PREFIX/bin/jb ]]
+then
+    $HOMEBREW_PREFIX/bin/brew install jsonnet-bundler
+fi
+
+if [[ ! -f $HOME/.local/bin/drone ]]
+    curl -L https://github.com/harness/drone-cli/releases/latest/download/drone_darwin_arm4.tar.gz | tar zx
+    mv drone $HOME/.local/bin/
+    chmod +x $HOME/.local/bin/drone
+then
+
 
 # Install minikube
 if [[ ! -f /usr/local/bin/minikube ]]
@@ -96,6 +124,9 @@ then
     git clone --depth=1 https://github.com/savq/paq-nvim.git \
         "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/paqs/start/paq-nvim
 fi
+
+# Setup bash prompts for PS1
+curl -L https://raw.github.com/git/git/master/contrib/completion/git-prompt.sh > ~/.bash_git
 
 echo
 echo "NOTES :"

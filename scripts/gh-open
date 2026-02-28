@@ -1,0 +1,6 @@
+#! /bin/bash
+
+REPO=$(echo "$1" | rev | cut -d "-" -f2- | rev | awk '{print tolower($0)}')
+ISSUE_NUM=$(echo "$1" | rev | cut -d "-" -f 1 | rev)
+
+open "https://github.com/grafana/$REPO/issues/$ISSUE_NUM"

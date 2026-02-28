@@ -1,5 +1,3 @@
-#! /bin/bash
-
 # Disable Mouse accel
 # xset m 1/1 0
 
@@ -33,8 +31,8 @@ alias ls="ls --color=auto"
 #-----------------------------------------------------------------------------
 
 function cb() {
-    print_code "git checkout -b $1 ${2:-upstream/master}";
-    git checkout -b "$1" "${2:-upstream/master}"
+    print_code "git checkout -b $1 ${2:-upstream/main}";
+    git checkout -b "$1" "${2:-upstream/main}"
 }
 
 source $HOME/.local/bin/wacomtabletmap

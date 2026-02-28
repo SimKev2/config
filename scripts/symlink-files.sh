@@ -5,6 +5,7 @@ mkdir -p ~/.aws
 ln -sf ~/config/shell/base16-shell/scripts/base16-default-dark.sh ~/.base16_theme
 ln -sf ~/config/bash_profiles/.bash_profile ~/.bash_profile
 ln -sf ~/config/.tmux.conf ~/.tmux.conf
+ln -sf ~/config/pycodestyle ~/.config/pycodestyle
 sudo ln -sf ~/config/scripts/jira-open /usr/local/bin/jira-open
 
 if [[ ! -d ~/.config/nvim ]]

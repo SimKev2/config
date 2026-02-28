@@ -5,10 +5,12 @@ local function map(mode, lhs, rhs, opts)
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 vim.cmd 'let mapleader = " "'
-vim.g.python3_host_prog = "$HOME/envs/py3neovim/bin/python"
+vim.g.python3_host_prog = home .. "/envs/py3neovim/bin/python"
 
 -- TODO figure out how to set this conditionally in lua https://github.com/chriskempson/base16-shell
-vim.cmd("colorscheme base16-$BASE16_THEME")
+-- New computer comment out the next two lines until you run a PaqInstall
+vim.g.base16colorspace = 256
+vim.cmd("colorscheme base16-default-dark")
 
 require "paq" {
     -- Let Paq manage itself
@@ -50,7 +52,8 @@ require "paq" {
     "ojroques/nvim-lspfuzzy";
 
     -- Language packs for syntax/indentation/highlighting
-    "sheerun/vim-polyglot";
+    -- Old usage, :TSInstall should replace
+    -- "sheerun/vim-polyglot";
 
     -- PlantUML preview
     "tyru/open-browser.vim";
@@ -58,40 +61,6 @@ require "paq" {
     "aklt/plantuml-syntax";
 }
 
-
--- require'compe'.setup {
---   enabled = true;
---   autocomplete = true;
---   debug = false;
---   min_length = 1;
---   preselect = 'enable';
---   throttle_time = 80;
---   source_timeout = 200;
---   resolve_timeout = 800;
---   incomplete_delay = 400;
---   max_abbr_width = 100;
---   max_kind_width = 100;
---   max_menu_width = 100;
---   documentation = {
---     border = { '', '' ,'', ' ', '', '', '', ' ' }, -- the border option is the same as `|help nvim_open_win|`
---     winhighlight = "NormalFloat:CompeDocumentation,FloatBorder:CompeDocumentationBorder",
---     max_width = 120,
---     min_width = 60,
---     max_height = math.floor(vim.o.lines * 0.3),
---     min_height = 1,
---   };
--- 
---   source = {
---     path = true;
---     buffer = true;
---     calc = true;
---     nvim_lsp = true;
---     nvim_lua = true;
---     vsnip = true;
---     ultisnips = true;
---     luasnip = true;
---   };
--- }
 
 local cmp = require'cmp'
 cmp.setup {
@@ -117,13 +86,6 @@ cmp.setup {
       else
         fallback()
       end
-      -- if not cmp.select_next_item() then
-      --   if vim.bo.buftype ~= 'prompt' and has_words_before() then
-      --     cmp.complete()
-      --   else
-      --     fallback()
-      --   end
-      -- end
     end,
     ['<S-Tab>'] = function(fallback)
       if cmp.visible() then
@@ -131,13 +93,6 @@ cmp.setup {
       else
         fallback()
       end
-      -- if not cmp.select_prev_item() then
-      --   if vim.bo.buftype ~= 'prompt' and has_words_before() then
-      --     cmp.complete()
-      --   else
-      --     fallback()
-      --   end
-      -- end
     end,
   }),
   sources = cmp.config.sources({
@@ -157,7 +112,7 @@ cmp.event:on(
 )
 
 require'nvim-autopairs'.setup({
-    check_tx = true,
+    check_ts = true,
     enable_check_bracket_line = false,
     ts_config = {
         lua = {'string'},
@@ -165,15 +120,11 @@ require'nvim-autopairs'.setup({
         java = false,
     }
 })
--- require'nvim-autopairs.completion.compe'.setup({
---     map_cr = true,
---     map_complete = true
--- })
 require'nvim-treesitter.configs'.setup {
     autotag = {
       enable = true,
     },
-    ensure_installed = { "lua", "rust", "python", "go" },
+    ensure_installed = { "lua", "rust", "python", "go", "jsonnet", "bash" },
     highlight = { enable = true, disable = { "python" } },
     autopairs = { enable = true },
     indent = { enable = true, disable = { "python", "yaml" }}
@@ -196,11 +147,10 @@ require'nvim-tree'.setup{
         custom = { '.pyc', '__pycache__', '.egg-info', 'node_modules' },
     },
     git = {
-        enable = true,
+        enable = false,
         ignore = false,
         timeout = 400,
     },
-    open_on_tab = true,
 }
 require'nvim-web-devicons'.setup{
     default = true;
@@ -213,11 +163,14 @@ local opts = { noremap=true, silent=true }
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
 
+-- Disable log, set to "debug" if needed
+vim.lsp.set_log_level("off")
+
 local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 local on_attach_common = function(client, bufnr)
     -- print("LSP started.");
-    vim.api.nvim_buf_set_option(0, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+    vim.bo.omnifunc = 'v:lua.vim.lsp.omnifunc'
     local bufopts = { noremap=true, silent=true, buffer=0 }
 
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
@@ -225,10 +178,9 @@ local on_attach_common = function(client, bufnr)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
     vim.keymap.set('n', '<F2>', vim.lsp.buf.rename, bufopts)
 
-    if client.server_capabilities.document_formatting then
+    if client.server_capabilities.documentFormattingProvider then
         vim.cmd [[augroup Format]]
         vim.cmd [[autocmd! * <buffer>]]
-        --vim.cmd [[autocmd BufWritePost <buffer> lua vim.lsp.buf.formatting()]]
         vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format({async=false})]]
         vim.cmd [[augroup END]]
     end
@@ -241,35 +193,35 @@ local eslint_d = {
     formatCommand = "eslint_d --fix-to-stdout --stdin --stdin-filename=${INPUT}",
     formatStdin = true
 }
-require'lspconfig'.pylsp.setup{
+vim.lsp.config('pylsp', {
     on_attach = function(client, bufnr)
-        client.server_capabilities.document_formatting = true
+        client.server_capabilities.documentFormattingProvider = true
         on_attach_common(client, bufnr)
     end,
     capabilities = capabilities
-}
-require'lspconfig'.rust_analyzer.setup{
-    on_attach = function(client)
-        client.server_capabilities.document_formatting = true
+})
+vim.lsp.config('rust_analyzer', {
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = true
         on_attach_common(client, bufnr)
     end,
     capabilities = capabilities
-}
-require'lspconfig'.tsserver.setup{
-    on_attach = function(client)
-        client.server_capabilities.document_formatting = false
+})
+vim.lsp.config('ts_ls', {
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = false
         on_attach_common(client, bufnr)
     end,
     capabilities = capabilities
-}
-require'lspconfig'.efm.setup({
-    on_attach = function(client)
-        client.server_capabilities.document_formatting = true
+})
+vim.lsp.config('efm', {
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = true
         on_attach_common(client, bufnr)
     end,
     capabilities = capabilities,
     init_options = {documentFormatting = true},
-    filetypes = {"javascript","typescript","typescriptreact","javascriptreact","javascript.jsx","typscript.tsx"},
+    filetypes = {"javascript","typescript","typescriptreact","javascriptreact","javascript.jsx","typescript.tsx"},
     settings = {
         languages = {
             javascript = {eslint_d},
@@ -279,14 +231,28 @@ require'lspconfig'.efm.setup({
         }
     }
 })
-require'lspconfig'.gopls.setup{
+vim.lsp.config('gopls', {
     on_attach = function(client, bufnr)
-        client.server_capabilities.document_formatting = false
+        client.server_capabilities.documentFormattingProvider = true
         on_attach_common(client, bufnr)
     end,
     capabilities = capabilities
-}
-require'lspfuzzy'.setup{} -- Make the LSP client use FZF instead of quickfix list
+})
+vim.lsp.config('jsonnet_ls', {
+    settings = {
+        show_docstring_in_completion = false,
+    },
+    on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = true
+        on_attach_common(client, bufnr)
+    end,
+    capabilities = capabilities
+})
+
+vim.lsp.enable({'pylsp', 'rust_analyzer', 'ts_ls', 'efm', 'gopls', 'jsonnet_ls'})
+
+-- Make the LSP client use FZF instead of quickfix list
+require'lspfuzzy'.setup{}
 
 
 -- require'open-browser'.setup{}
@@ -304,6 +270,9 @@ require'lspfuzzy'.setup{} -- Make the LSP client use FZF instead of quickfix lis
 vim.opt.background = "dark"
 vim.cmd 'hi Normal ctermbg=NONE'
 -- vim.cmd 'filetype plugin indent on'
+
+-- Remove auto wrap while typing
+vim.opt.formatoptions:remove("t")
 
 map('n', '<Leader>w', ':w<CR>')
 map('n', '<Leader>w<CR>', ':w<CR>')
@@ -358,6 +327,7 @@ map('n', '<C-H>', '<C-W><C-H>')         -- Quick pane movements
 map('n', '<C-J>', '<C-W><C-J>')
 map('n', '<C-K>', '<C-W><C-K>')
 map('n', '<C-L>', '<C-W><C-L>')
+map('n', '<C-g>', ':NvimTreeFindFile<CR>')
 map('n', 'th', ':tabfirst<CR>')         -- Quick tab movements
 map('n', 'tj', ':tabnext<CR>')
 map('n', 'tk', ':tabprev<CR>')

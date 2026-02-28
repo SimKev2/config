@@ -47,7 +47,11 @@ export NVM_DIR="$HOME/.nvm"
 
 # Terminal Prompt
 parse_git_branch() {
-  git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+  if [ -f ~/.bash_git ]; then
+    __git_ps1
+  else
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+  fi
 }
 
 # Put kubectl context on PS1
@@ -94,6 +98,10 @@ alias gupdate="git fetch --all --prune"
 alias gamend="git add -A && git commit --amend"
 
 alias k="kubectl"
+
+# https://adamj.eu/tech/2022/10/27/git-how-to-alias-master-as-main/
+# git config --global alias.alias-master-as-main '!git symbolic-ref refs/heads/main refs/heads/master && git symbolic-ref refs/remotes/origin/main refs/remotes/origin/master && git symbolic-ref refs/remotes/upstream/main refs/remotes/upstream/master && git switch main'
+# git alias-master-as-main
 
 # Virtualenv Wrapper Aliases
 _virtualEnvsComplete()
@@ -151,3 +159,9 @@ eval "$(pyenv init -)"
 # eval "$(nodenv init -)"
 . "$HOME/.cargo/env"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/kevinsimons/.local/programs/google-cloud-sdk/path.bash.inc' ]; then . '/Users/kevinsimons/.local/programs/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/kevinsimons/.local/programs/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/kevinsimons/.local/programs/google-cloud-sdk/completion.bash.inc'; fi

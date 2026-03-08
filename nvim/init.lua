@@ -39,7 +39,7 @@ require "paq" {
 
     -- Syntax highlighting / parsing
     "windwp/nvim-autopairs";
-    "nvim-treesitter/nvim-treesitter";
+    {"nvim-treesitter/nvim-treesitter", build = ':TSUpdate'};
 
     -- Fuzzy File Search
     {"junegunn/fzf", build = vim.fn['fzf#install']};
@@ -124,7 +124,15 @@ require'nvim-treesitter.configs'.setup {
     autotag = {
       enable = true,
     },
-    ensure_installed = { "lua", "rust", "python", "go", "jsonnet", "bash" },
+    ensure_installed = {
+        "bash",
+        "go",
+        "jsonnet",
+        "lua",
+        "make",
+        "python",
+        "rust",
+    },
     highlight = { enable = true, disable = { "python" } },
     autopairs = { enable = true },
     indent = { enable = true, disable = { "python", "yaml" }}
@@ -238,18 +246,29 @@ vim.lsp.config('gopls', {
     end,
     capabilities = capabilities
 })
-vim.lsp.config('jsonnet_ls', {
-    settings = {
-        show_docstring_in_completion = false,
-    },
-    on_attach = function(client, bufnr)
-        client.server_capabilities.documentFormattingProvider = true
-        on_attach_common(client, bufnr)
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = {'jsonnet', 'libsonnet'},
+    callback = function(ev)
+        local root = vim.fs.root(ev.buf, {'jsonnetfile.json', 'tkrc.yaml'})
+        local cmd = {'jsonnet-language-server'}
+        if root then
+            vim.list_extend(cmd, {'-J', root .. '/vendor', '-J', root .. '/lib'})
+        end
+        vim.lsp.start({
+            name = 'jsonnet_ls',
+            cmd = cmd,
+            root_dir = root,
+            capabilities = capabilities,
+            settings = {show_docstring_in_completion = false},
+            on_attach = function(client, bufnr)
+                client.server_capabilities.documentFormattingProvider = true
+                on_attach_common(client, bufnr)
+            end,
+        })
     end,
-    capabilities = capabilities
 })
 
-vim.lsp.enable({'pylsp', 'rust_analyzer', 'ts_ls', 'efm', 'gopls', 'jsonnet_ls'})
+vim.lsp.enable({'pylsp', 'rust_analyzer', 'ts_ls', 'efm', 'gopls'})
 
 -- Make the LSP client use FZF instead of quickfix list
 require'lspfuzzy'.setup{}
